@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
   "name": "samgak",
-=======
-  "name": "triangle-ghimbab",
->>>>>>> bb0530803bd4314afd112e35bc7e32858a2788f3
   "version": "0.1.0",
   "private": true,
   "scripts": {
