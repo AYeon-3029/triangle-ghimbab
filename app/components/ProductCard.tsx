@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import TierBadge from "./TierBadge";
 import Stars from "./Stars";
 import type { Product } from "../lib/data";
@@ -30,7 +30,7 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
         {/* 순위 */}
         <span
           style={{
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-mono)",
             fontSize: 10,
             color: isTop3 ? "var(--accent)" : "var(--mute)",
           }}
@@ -75,7 +75,7 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
                 <span
                   key={t}
                   style={{
-                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontFamily: "var(--font-mono)",
                     fontSize: 9,
                     color: "var(--mute)",
                   }}
@@ -104,7 +104,7 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
           <div
             style={{
               marginTop: 3,
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-mono)",
               fontSize: 9,
               color: "var(--mute)",
             }}

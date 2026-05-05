@@ -1,7 +1,29 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+@font-face {
+  font-family: 'KotraGothic';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10-21@1.0/KOTRA_GOTHIC.woff') format('woff');
+  font-weight: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Oagothic';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/OAGothic-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Oagothic';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/OAGothic-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-display: swap;
+}
 
 :root {
+  --font-sans: 'Oagothic', system-ui, sans-serif;
+  --font-mono: 'KotraGothic', ui-monospace, monospace;
   --bg: #fafaf8;
   --paper: #ffffff;
   --ink: #1a1a1a;
@@ -18,7 +40,7 @@
 }
 
 body {
-  font-family: 'IBM Plex Sans KR', system-ui, sans-serif;
+  font-family: var(--font-sans);
   color: var(--ink);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
@@ -32,5 +54,5 @@ body {
 }
 
 textarea {
-  font-family: 'IBM Plex Sans KR', sans-serif;
+  font-family: var(--font-sans);
 }

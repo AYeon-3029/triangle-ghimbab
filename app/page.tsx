@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Navbar from "./components/Navbar";
@@ -12,7 +12,7 @@ const FILTER_TAGS = ["전체", "인기", "매운맛", "든든한", "가성비", 
 const PERIOD_OPTS = ["주간", "월간", "전체"];
 
 const LABEL: React.CSSProperties = {
-  fontFamily: "'IBM Plex Mono', monospace",
+  fontFamily: "var(--font-mono)",
   fontSize: 9,
   letterSpacing: "0.05em",
   textTransform: "uppercase",
@@ -32,7 +32,7 @@ function PeriodToggle({
         display: "inline-flex",
         border: "1px solid var(--line)",
         flexShrink: 0,
-        fontFamily: "'IBM Plex Mono', monospace",
+        fontFamily: "var(--font-mono)",
         fontSize: 9,
       }}
     >
@@ -50,7 +50,7 @@ function PeriodToggle({
             border: "none",
             borderLeft: i > 0 ? "1px solid var(--line)" : undefined,
             cursor: "pointer",
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-mono)",
             fontSize: 9,
           }}
         >
@@ -93,7 +93,7 @@ export default function HomePage() {
           </span>
           <span
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-mono)",
               fontSize: 10,
               color: "var(--mute)",
             }}

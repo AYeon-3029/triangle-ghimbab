@@ -1,4 +1,4 @@
-import type { Tier } from "../lib/data";
+﻿import type { Tier } from "../lib/data";
 
 const STYLES: Record<Tier, { bg: string; color: string; border: string }> = {
   S: { bg: "var(--accent)",  color: "#fff",          border: "var(--accent)"    },
@@ -20,7 +20,7 @@ export default function TierBadge({ tier }: { tier: Tier }) {
         border: `1px solid ${s.border}`,
         background: s.bg,
         color: s.color,
-        fontFamily: "'IBM Plex Mono', monospace",
+        fontFamily: "var(--font-mono)",
         fontWeight: 700,
         fontSize: 13,
         flexShrink: 0,

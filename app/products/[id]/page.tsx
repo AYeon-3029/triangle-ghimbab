@@ -36,9 +36,9 @@ const TAG_AGGREGATE = [
 
 const SORT_OPTS = ["최신", "별점↑", "별점↓", "도움"];
 
-const MONO: React.CSSProperties = { fontFamily: "'IBM Plex Mono', monospace" };
+const MONO: React.CSSProperties = { fontFamily: "var(--font-mono)" };
 const LABEL: React.CSSProperties = {
-  fontFamily: "'IBM Plex Mono', monospace",
+  fontFamily: "var(--font-mono)",
   fontSize: 9,
   letterSpacing: "0.05em",
   textTransform: "uppercase",
@@ -214,7 +214,7 @@ export default function ProductPage() {
                 border: "none",
                 borderLeft: i > 0 ? "1px solid var(--line-soft)" : undefined,
                 cursor: "pointer",
-                fontFamily: "'IBM Plex Mono', monospace",
+                fontFamily: "var(--font-mono)",
                 fontSize: 10,
                 letterSpacing: "0.04em",
               }}

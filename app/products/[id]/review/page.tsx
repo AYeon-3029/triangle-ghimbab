@@ -11,9 +11,9 @@ const TAG_GROUPS = [
   { group: "식사 적합", items: ["아침", "점심", "야식", "술안주"] },
 ];
 
-const MONO: React.CSSProperties = { fontFamily: "'IBM Plex Mono', monospace" };
+const MONO: React.CSSProperties = { fontFamily: "var(--font-mono)" };
 const LABEL: React.CSSProperties = {
-  fontFamily: "'IBM Plex Mono', monospace",
+  fontFamily: "var(--font-mono)",
   fontSize: 9,
   letterSpacing: "0.05em",
   textTransform: "uppercase",
@@ -277,7 +277,7 @@ export default function ReviewWritePage() {
                           color: on ? "var(--paper)" : "var(--ink)",
                           fontSize: 11,
                           cursor: "pointer",
-                          fontFamily: "'IBM Plex Sans KR', sans-serif",
+                          fontFamily: "var(--font-sans)",
                         }}
                       >
                         {on ? "✓ " : ""}{t}
@@ -335,7 +335,7 @@ export default function ReviewWritePage() {
                   color: repurchase === val ? "var(--paper)" : "var(--ink)",
                   fontSize: 12,
                   cursor: "pointer",
-                  fontFamily: "'IBM Plex Sans KR', sans-serif",
+                  fontFamily: "var(--font-sans)",
                 }}
               >
                 {val ? "예 다시 살래요" : "아니요"}
@@ -363,7 +363,7 @@ export default function ReviewWritePage() {
             border: "none",
             fontSize: 14,
             fontWeight: 600,
-            fontFamily: "'IBM Plex Sans KR', sans-serif",
+            fontFamily: "var(--font-sans)",
             cursor: "pointer",
           }}
         >

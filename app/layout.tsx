@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body style={{ minHeight: "100vh" }}>{children}</body>
+<body style={{ minHeight: "100vh" }}>{children}</body>
     </html>
   );
 }

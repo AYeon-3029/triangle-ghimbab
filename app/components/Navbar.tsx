@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { ReactNode } from "react";
 
 export default function Navbar({ right }: { right?: ReactNode }) {
@@ -35,7 +35,7 @@ export default function Navbar({ right }: { right?: ReactNode }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-mono)",
             fontSize: 11,
             fontWeight: 700,
             color: "var(--ink)",
@@ -60,7 +60,7 @@ export default function Navbar({ right }: { right?: ReactNode }) {
           <Link
             href="/login"
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-mono)",
               fontSize: 10,
               textTransform: "uppercase",
               letterSpacing: "0.03em",
