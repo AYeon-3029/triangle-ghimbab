@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import TierBadge from "../../components/TierBadge";
 import Stars from "../../components/Stars";
-import TabBar from "../../components/TabBar";
 import { PRODUCTS } from "../../lib/data";
 
 type Review = {
@@ -279,7 +278,6 @@ export default function ProductPage() {
         </div>
       </main>
 
-      <TabBar />
     </div>
   );
 }

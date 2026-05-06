@@ -1,15 +1,20 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Navbar from "./components/Navbar";
 import SearchBar from "./components/SearchBar";
 import TagFilter from "./components/TagFilter";
 import ProductCard from "./components/ProductCard";
-import TabBar from "./components/TabBar";
 import { PRODUCTS } from "./lib/data";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const FILTER_TAGS = ["전체", "인기", "매운맛", "든든한", "가성비", "클래식", "고소한"];
-const PERIOD_OPTS = ["주간", "월간", "전체"];
+const FILTER_TAGS = ["전체", "매운맛", "든든한", "가성비", "클래식", "고소한"];
 
 const LABEL: React.CSSProperties = {
   fontFamily: "var(--font-mono)",
@@ -19,54 +24,12 @@ const LABEL: React.CSSProperties = {
   color: "var(--mute)",
 };
 
-function PeriodToggle({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div
-      style={{
-        display: "inline-flex",
-        border: "1px solid var(--line)",
-        flexShrink: 0,
-        fontFamily: "var(--font-mono)",
-        fontSize: 9,
-      }}
-    >
-      {PERIOD_OPTS.map((o, i) => (
-        <button
-          key={o}
-          onClick={() => onChange(o)}
-          style={{
-            padding: "4px 7px",
-            textTransform: "uppercase",
-            letterSpacing: "0.03em",
-            whiteSpace: "nowrap",
-            background: o === value ? "var(--line)" : "transparent",
-            color: o === value ? "var(--paper)" : "var(--ink)",
-            border: "none",
-            borderLeft: i > 0 ? "1px solid var(--line)" : undefined,
-            cursor: "pointer",
-            fontFamily: "var(--font-mono)",
-            fontSize: 9,
-          }}
-        >
-          {o}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 export default function HomePage() {
   const [period, setPeriod] = useState("주간");
   const [activeFilter, setActiveFilter] = useState("전체");
 
   const filtered = PRODUCTS.filter((p) => {
-    if (activeFilter === "전체" || activeFilter === "인기") return true;
+    if (activeFilter === "전체") return true;
     return p.tags.includes(activeFilter);
   });
   const sorted = [...filtered].sort((a, b) => b.rating - a.rating);
@@ -74,7 +37,7 @@ export default function HomePage() {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Navbar right={<PeriodToggle value={period} onChange={setPeriod} />} />
+      <Navbar />
       <SearchBar />
       <TagFilter items={FILTER_TAGS} value={activeFilter} onChange={setActiveFilter} />
 
@@ -84,22 +47,40 @@ export default function HomePage() {
           style={{
             display: "flex",
             justifyContent: "space-between",
-            alignItems: "baseline",
+            alignItems: "center",
             margin: "4px 0 8px",
           }}
         >
           <span style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.015em" }}>
-            이번 주 랭킹
+            삼각김밥 티어리스트
           </span>
-          <span
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 10,
-              color: "var(--mute)",
-            }}
-          >
-            전체 ▸
-          </span>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 10,
+                color: "var(--mute)",
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+              }}
+            >
+              {period} ▾
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuRadioGroup
+                value={period}
+                onValueChange={(v) => v && setPeriod(v as string)}
+              >
+                <DropdownMenuRadioItem value="주간">주간</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="월간">월간</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="전체">전체</DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* 테이블 헤더 */}
@@ -130,8 +111,6 @@ export default function HomePage() {
           />
         ))}
       </main>
-
-      <TabBar />
     </div>
   );
 }
