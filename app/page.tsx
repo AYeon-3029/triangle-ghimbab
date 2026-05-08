@@ -25,7 +25,7 @@ const LABEL: React.CSSProperties = {
 };
 
 export default function HomePage() {
-  const [period, setPeriod] = useState("주간");
+  const [period, setPeriod] = useState("전체");
   const [activeFilter, setActiveFilter] = useState("전체");
 
   const filtered = PRODUCTS.filter((p) => {
@@ -70,14 +70,14 @@ export default function HomePage() {
             >
               {period} ▾
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="!w-auto min-w-0 p-0.5 rounded-sm text-center" style={{ fontFamily: "var(--font-mono)", fontSize: 10 }}>
               <DropdownMenuRadioGroup
                 value={period}
                 onValueChange={(v) => v && setPeriod(v as string)}
               >
-                <DropdownMenuRadioItem value="주간">주간</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="월간">월간</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="전체">전체</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="주간" className="py-0.5 px-2">주간</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="월간" className="py-0.5 px-2">월간</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="전체" className="py-0.5 px-2">전체</DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuContent>
           </DropdownMenu>

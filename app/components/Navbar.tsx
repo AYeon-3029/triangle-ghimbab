@@ -58,17 +58,17 @@ export default function Navbar({ right }: { right?: ReactNode }) {
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         {right ?? (
           <Link
-            href="/login"
+            href="/products/1/review"
             style={{
-              fontFamily: "var(--font-mono)",
+              fontFamily: "var(--font-sans)",
               fontSize: 10,
               textTransform: "uppercase",
               letterSpacing: "0.03em",
-              color: "var(--mute)",
+              color: "var(--accent)",
               textDecoration: "none",
             }}
           >
-            로그인
+            리뷰 작성 →
           </Link>
         )}
       </div>

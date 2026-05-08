@@ -1,10 +1,11 @@
 ﻿import type { Tier } from "../lib/data";
 
 const STYLES: Record<Tier, { bg: string; color: string; border: string }> = {
-  S: { bg: "var(--accent)",  color: "#fff",          border: "var(--accent)"    },
+  S: { bg: "var(--accent)",  color: "var(--ink)",    border: "var(--line)"    },
   A: { bg: "var(--paper)",   color: "var(--ink)",    border: "var(--line)"      },
   B: { bg: "var(--fill)",    color: "var(--ink)",    border: "var(--line)"      },
   C: { bg: "var(--fill-2)",  color: "var(--mute)",   border: "var(--line-soft)" },
+  "?": { bg: "var(--fill-2)", color: "var(--mute)",  border: "var(--line-soft)" },
 };
 
 export default function TierBadge({ tier }: { tier: Tier }) {
@@ -24,7 +25,7 @@ export default function TierBadge({ tier }: { tier: Tier }) {
         fontWeight: 700,
         fontSize: 13,
         flexShrink: 0,
-        lineHeight: 1,
+        lineHeight: "normal",
       }}
     >
       {tier}

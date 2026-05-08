@@ -1,4 +1,4 @@
-export type Tier = "S" | "A" | "B" | "C";
+export type Tier = "S" | "A" | "B" | "C" | "?";
 
 export type Product = {
   id: number;
@@ -24,5 +24,5 @@ export const PRODUCTS: Product[] = [
   { id: 9,  name: "소고기버섯",   brand: "GS25",    price: 2000, rating: 3.7, reviewCount: 256,  tags: ["든든한", "단백질", "클래식"],  emoji: "🍄", tier: "B" },
   { id: 10, name: "참치김치",     brand: "GS25",    price: 1600, rating: 3.6, reviewCount: 198,  tags: ["매운맛", "클래식", "가성비"],  emoji: "🐠", tier: "B" },
   { id: 11, name: "오징어볶음",   brand: "GS25",    price: 1700, rating: 3.4, reviewCount: 142,  tags: ["매운맛", "자극적", "짠맛"],    emoji: "🦑", tier: "C" },
-  { id: 12, name: "진미채마요",   brand: "GS25",    price: 1500, rating: 3.2, reviewCount: 89,   tags: ["짠맛",   "고소한", "가성비"],  emoji: "🐡", tier: "C" },
+  { id: 12, name: "진미채마요",   brand: "GS25",    price: 1500, rating: 3.2, reviewCount: 89,   tags: ["짠맛",   "고소한", "가성비"],  emoji: "🐡", tier: "?" },
 ];
