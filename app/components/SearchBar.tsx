@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -72,7 +72,7 @@ export default function SearchBar({
             outline: "none",
             fontSize: 12,
             color: "var(--ink)",
-            fontFamily: "'IBM Plex Sans KR', sans-serif",
+            fontFamily: "var(--font-sans)",
           }}
         />
       </div>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "삼각편대 — 삼각김밥 편의점 대장",
@@ -13,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body style={{ minHeight: "100vh" }}>{children}</body>
+      <body style={{ minHeight: "100vh" }}>{children}<Toaster /></body>
     </html>
   );
 }

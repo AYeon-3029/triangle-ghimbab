@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import type { ReactNode } from "react";
 
 export default function Navbar({ right }: { right?: ReactNode }) {
@@ -35,7 +35,7 @@ export default function Navbar({ right }: { right?: ReactNode }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "var(--font-mono)",
             fontSize: 11,
             fontWeight: 700,
             color: "var(--ink)",
@@ -58,17 +58,17 @@ export default function Navbar({ right }: { right?: ReactNode }) {
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         {right ?? (
           <Link
-            href="/login"
+            href="/products/1/review"
             style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "var(--font-sans)",
               fontSize: 10,
               textTransform: "uppercase",
               letterSpacing: "0.03em",
-              color: "var(--mute)",
+              color: "var(--accent)",
               textDecoration: "none",
             }}
           >
-            로그인
+            리뷰 작성 →
           </Link>
         )}
       </div>

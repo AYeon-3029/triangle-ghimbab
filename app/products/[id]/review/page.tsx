@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { Star, StarHalf } from "lucide-react";
 import { PRODUCTS } from "../../../lib/data";
 
 const TAG_GROUPS = [
@@ -11,9 +12,9 @@ const TAG_GROUPS = [
   { group: "식사 적합", items: ["아침", "점심", "야식", "술안주"] },
 ];
 
-const MONO: React.CSSProperties = { fontFamily: "'IBM Plex Mono', monospace" };
+const MONO: React.CSSProperties = { fontFamily: "var(--font-mono)" };
 const LABEL: React.CSSProperties = {
-  fontFamily: "'IBM Plex Mono', monospace",
+  fontFamily: "var(--font-mono)",
   fontSize: 9,
   letterSpacing: "0.05em",
   textTransform: "uppercase",
@@ -55,7 +56,7 @@ export default function ReviewWritePage() {
       alert("별점을 선택해주세요.");
       return;
     }
-    alert("리뷰가 제출되었습니다! (Supabase 연결 후 실제 저장 예정)");
+    alert("리뷰가 제출되었습니다. 감사합니다! \n (Supabase 연결 후 실제 저장 예정)");
     router.back();
   }
 
@@ -147,26 +148,37 @@ export default function ReviewWritePage() {
               <span style={{ ...LABEL, fontSize: 11 }}>/ 5.0</span>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 4, margin: "12px 0 4px", justifyContent: "center" }}>
-            {[1, 2, 3, 4, 5].map((star) => (
-              <button
-                key={star}
-                onMouseEnter={() => setHoverRating(star)}
-                onMouseLeave={() => setHoverRating(0)}
-                onClick={() => setRating(star)}
-                style={{
-                  fontSize: 36,
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: star <= displayRating ? "var(--accent)" : "var(--fill)",
-                  padding: "0 2px",
-                  lineHeight: 1,
-                }}
-              >
-                ★
-              </button>
-            ))}
+          <div style={{ display: "flex", gap: 2, margin: "12px 0 4px", justifyContent: "center" }}>
+            {[1, 2, 3, 4, 5].map((star) => {
+              const isFull = displayRating >= star;
+              const isHalf = !isFull && displayRating >= star - 0.5;
+              return (
+                <div key={star} style={{ position: "relative", width: 40, height: 40 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", pointerEvents: "none" }}>
+                    {isFull
+                      ? <Star size={32} fill="#000000" stroke="none" />
+                      : isHalf
+                      ? <div style={{ position: "relative", width: 32, height: 32 }}>
+                          <Star size={32} fill="var(--line-soft)" stroke="none" style={{ position: "absolute", top: 0, left: 0 }} />
+                          <StarHalf size={32} fill="#000000" stroke="none" style={{ position: "absolute", top: 0, left: 0 }} />
+                        </div>
+                      : <Star size={32} fill="var(--line-soft)" stroke="none" />}
+                  </div>
+                  <button
+                    onMouseEnter={() => setHoverRating(star - 0.5)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    onClick={() => setRating(star - 0.5)}
+                    style={{ position: "absolute", left: 0, top: 0, width: "50%", height: "100%", opacity: 0, cursor: "pointer", border: "none", background: "none" }}
+                  />
+                  <button
+                    onMouseEnter={() => setHoverRating(star)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    onClick={() => setRating(star)}
+                    style={{ position: "absolute", right: 0, top: 0, width: "50%", height: "100%", opacity: 0, cursor: "pointer", border: "none", background: "none" }}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -174,69 +186,64 @@ export default function ReviewWritePage() {
 
         {/* 2. 사진 */}
         <div>
-          <div style={{ ...LABEL, marginBottom: 6 }}>사진 (선택, 최대 2장)</div>
+          <div style={{ ...LABEL, marginBottom: 6 }}>사진 (선택, 최대 1장)</div>
           <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
-            {[0, 1].map((i) => {
-              const file = photos[i];
-              return file ? (
-                <div key={i} style={{ position: "relative" }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt=""
-                    style={{
-                      width: 80,
-                      height: 80,
-                      objectFit: "cover",
-                      border: "1px solid var(--line-soft)",
-                      display: "block",
-                    }}
-                  />
-                  <button
-                    onClick={() => setPhotos((prev) => prev.filter((_, idx) => idx !== i))}
-                    style={{
-                      position: "absolute",
-                      top: 4,
-                      right: 4,
-                      width: 18,
-                      height: 18,
-                      background: "var(--line)",
-                      color: "var(--paper)",
-                      border: "none",
-                      cursor: "pointer",
-                      fontSize: 11,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      lineHeight: 1,
-                    }}
-                  >
-                    ×
-                  </button>
-                </div>
-              ) : (
-                <button
-                  key={i}
-                  onClick={() => fileRef.current?.click()}
+            {photos[0] ? (
+              <div style={{ position: "relative" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={URL.createObjectURL(photos[0])}
+                  alt=""
                   style={{
                     width: 80,
                     height: 80,
-                    border: "1px dashed var(--line-soft)",
-                    background: "transparent",
+                    objectFit: "cover",
+                    border: "1px solid var(--line-soft)",
+                    display: "block",
+                  }}
+                />
+                <button
+                  onClick={() => setPhotos([])}
+                  style={{
+                    position: "absolute",
+                    top: 4,
+                    right: 4,
+                    width: 18,
+                    height: 18,
+                    background: "var(--line)",
+                    color: "var(--paper)",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: 11,
                     display: "flex",
-                    flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    gap: 4,
-                    cursor: "pointer",
+                    lineHeight: 1,
                   }}
                 >
-                  <span style={{ fontSize: 18, color: "var(--mute)", lineHeight: 1 }}>＋</span>
-                  <span style={LABEL}>사진 추가</span>
+                  ×
                 </button>
-              );
-            })}
-            <span style={{ ...LABEL, paddingBottom: 4 }}>{photos.length}/2</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => fileRef.current?.click()}
+                style={{
+                  width: 80,
+                  height: 80,
+                  border: "1px dashed var(--line-soft)",
+                  background: "transparent",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 4,
+                  cursor: "pointer",
+                }}
+              >
+                <span style={{ fontSize: 18, color: "var(--mute)", lineHeight: 1 }}>＋</span>
+                <span style={LABEL}>사진 추가</span>
+              </button>
+            )}
           </div>
           <input
             ref={fileRef}
@@ -245,7 +252,7 @@ export default function ReviewWritePage() {
             style={{ display: "none" }}
             onChange={(e) => {
               const f = e.target.files?.[0];
-              if (f && photos.length < 2) setPhotos((prev) => [...prev, f]);
+              if (f) setPhotos([f]);
               e.target.value = "";
             }}
           />
@@ -272,12 +279,12 @@ export default function ReviewWritePage() {
                         onClick={() => toggleTag(t)}
                         style={{
                           padding: "3px 8px",
-                          border: "1px solid var(--line)",
+                          border: "1px solid var(--mute)",
                           background: on ? "var(--line)" : "var(--paper)",
-                          color: on ? "var(--paper)" : "var(--ink)",
+                          color: on ? "var(--paper)" : "var(--mute)",
                           fontSize: 11,
                           cursor: "pointer",
-                          fontFamily: "'IBM Plex Sans KR', sans-serif",
+                          fontFamily: "var(--font-sans)",
                         }}
                       >
                         {on ? "✓ " : ""}{t}
@@ -298,7 +305,7 @@ export default function ReviewWritePage() {
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value.slice(0, 200))}
-            placeholder="솔직한 후기를 남겨주세요"
+            placeholder="맛에 대한 평가, 맛있게 먹는 꿀팁 등 뭐든 좋아요!"
             style={{
               width: "100%",
               border: "1px solid var(--line-soft)",
@@ -335,10 +342,10 @@ export default function ReviewWritePage() {
                   color: repurchase === val ? "var(--paper)" : "var(--ink)",
                   fontSize: 12,
                   cursor: "pointer",
-                  fontFamily: "'IBM Plex Sans KR', sans-serif",
+                  fontFamily: "var(--font-sans)",
                 }}
               >
-                {val ? "예 다시 살래요" : "아니요"}
+                {val ? "네, 또 먹고 싶어요!" : "그 정도는 아니에요.."}
               </button>
             ))}
           </div>
@@ -363,7 +370,7 @@ export default function ReviewWritePage() {
             border: "none",
             fontSize: 14,
             fontWeight: 600,
-            fontFamily: "'IBM Plex Sans KR', sans-serif",
+            fontFamily: "var(--font-sans)",
             cursor: "pointer",
           }}
         >

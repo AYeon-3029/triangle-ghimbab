@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 type Props = {
   items: string[];
@@ -30,7 +30,7 @@ export default function TagFilter({ items, value, onChange }: Props) {
               background: active ? "var(--line)" : "transparent",
               color: active ? "var(--paper)" : "var(--mute)",
               fontSize: 11,
-              fontFamily: "'IBM Plex Sans KR', sans-serif",
+              fontFamily: "var(--font-sans)",
               cursor: "pointer",
               whiteSpace: "nowrap",
             }}
