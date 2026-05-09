@@ -16,17 +16,17 @@ enum Brand {
 }
 
 enum Tag {
-  withDrink
-  Delicious
-  Salty
-  Heavy
-  Mild
-  Spicy
-  Normal
-  Dry
-  Sweety
-  withRamyeon
-  Resonable
+  withDrink //음료랑
+  Salty //짭짤
+  Heavy //든든
+  Mild  //슴슴
+  Spicy //매콤
+  Normal  //무난
+  Dry //퍽퍽
+  Sweety  //달달
+  withRamyeon  //라면이랑
+  Chewy //씹는맛
+  Fishy //비림
 }
 
 enum Tier {
@@ -45,7 +45,7 @@ model Product {
   avgRating Float    @default(0)
   score     Float    @default(0)
   tier      Tier     @default(Unknown)
-  // { withDrink: 3, Delicious: 5, ... } - 리뷰에 달린 태그별 누적 개수
+  // { withDrink: 3, Heavy: 5, ... } - 리뷰에 달린 태그별 누적 개수
   tagCounts Json     @default("{}")
   isNew     Boolean  @default(false)
   price     Int      @default(0)

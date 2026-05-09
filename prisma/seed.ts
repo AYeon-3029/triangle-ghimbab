@@ -24,7 +24,7 @@ const SEED_DATA: {
   }[];
 }[] = [
   // ── 삼각 시리즈 ──────────────────────────────
-  { id: "P001", name: "삼각)저당전주비빔",       brand: Brand.GS25, price: 1200, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P001.jpg", reviews: [
+  { id: "P001", name: "삼각)저당전주비빔",       brand: Brand.GS25, price: 1200, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P001.jpg", reviews: [
     {
       id: "R0011",
       rating: 4,
@@ -32,7 +32,7 @@ const SEED_DATA: {
       imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0011_P001.jpg",
     }
   ] },
-  { id: "P002", name: "삼각)라이트참치마요",     brand: Brand.GS25, price: 1300, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P002.jpg", reviews: [] },
+  { id: "P002", name: "삼각)라이트참치마요",     brand: Brand.GS25, price: 1300, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P002.jpg", reviews: [] },
   { id: "P003", name: "삼각)콘참치마요",         brand: Brand.GS25, price: 1300, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P003.jpg", reviews: [] },
   { id: "P004", name: "삼각)갈비양념불고기",     brand: Brand.GS25, price: 1300, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P004.jpg", reviews: [] },
   { id: "P005", name: "삼각)참치마요",           brand: Brand.GS25, price: 1200, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P005.jpg", reviews: [
@@ -40,7 +40,6 @@ const SEED_DATA: {
       id: "R0015",
       rating: 4,
       comment: `자주 애용하는 삼각김밥. 가성비 굿!`,
-      tags: [Tag.Resonable],
     },
     {
       id: "R0016",
@@ -73,20 +72,30 @@ const SEED_DATA: {
     }
   ] },
   { id: "P006", name: "삼각)더바삭한김참치마요1",brand: Brand.GS25, price: 1200, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P006.jpg", reviews: [] },
-  { id: "P007", name: "삼각)新전주비빔",         brand: Brand.GS25, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P007.jpg", reviews: [
+  { id: "P007", name: "삼각)新전주비빔",         brand: Brand.GS25, price: 1200, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P007.jpg", reviews: [
     {
       id: "R0001",
       rating: 4,
       comment: `먹기전에 약간 짜지않을까 걱정했는데 생각보다 양념이 과하지 않음. 밥 전체에 양념이 베어있어서 모서리 부분도 밍밍하지않았음. 제로 콜라랑 먹으면 더 맛있을 듯? 다만 양이 다소 부족하여 2개는 먹어야 한끼를 때울 수 있어 보임`,
       imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0001_P007.jpg",
-      tags: [Tag.Delicious, Tag.withDrink],
+      tags: [Tag.withDrink, Tag.Dry],
     }
+  ] },
+  { id: "P008", name: "삼각)스팸김치볶음밥",         brand: Brand.GS25, price: 1400, isNew: true, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P008.jpg", reviews: [
+    {
+      id: "R0031",
+      rating: 4.5,
+      comment: `적절한 간과 적당한 맵기와 신뢰의 스팸 및 마요`,
+      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0031_P008.jpg",
+    }
+  ] },
+  { id: "P009", name: "삼각)참치김치볶음밥",         brand: Brand.GS25, price: 1400, isNew: true, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P009.jpg", reviews: [
   ] },
 
   // ── 더큰 시리즈 ──────────────────────────────
-  { id: "P101", name: "더큰)닭갈비깻잎쌈밥",    brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P101.jpg", reviews: [] },
-  { id: "P102", name: "더큰)전주비빔",           brand: Brand.GS25, price: 1700, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P102.jpg", reviews: [] },
-  { id: "P103", name: "더큰)스팸계란볶음밥",     brand: Brand.GS25, price: 1900,  imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P103.jpg", reviews: [
+  { id: "P101", name: "더큰)닭갈비깻잎쌈밥",    brand: Brand.GS25, price: 1800, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P101.jpg", reviews: [] },
+  { id: "P102", name: "더큰)전주비빔",           brand: Brand.GS25, price: 1700, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P102.jpg", reviews: [] },
+  { id: "P103", name: "더큰)스팸계란볶음밥", isNew: true,    brand: Brand.GS25, price: 1900,  imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P103.jpg", reviews: [
     {
       id: "R0007",
       rating: 3.5,
@@ -125,11 +134,19 @@ const SEED_DATA: {
       rating: 5,
       comment: `깻잎이 김 옆에 크게 감싸져 있어서 좋았음. 깻잎의 씹는 맛과 향이 제육과 어우러져 매우 만족스러웠음. 제육 본연의 맛도 좋은데 깻잎이 ㄹㅇ 킥임. 근래 먹은 것 중에서 최고의 삼김이었음`,
       imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0024_P105.jpg",
+      tags: [Tag.Chewy]
     },
     {
       id: "R0027",
       rating: 5,
       comment: `어제도 먹었는데 또 먹음 ㄹㅇ 꿀맛`,
+    },
+    {
+      id: "R0030",
+      rating: 4.0,
+      comment: `친구한테 추천받아서 먹어봤는데 맛있긴 했다. 포장지에 고기토핑이면 30초 정도 전자레인지 돌리라고 써있길래 했는데 내 생각엔 안 돌렸으면 좀 더 씹는맛 있고 더 맛있지 않았을까 싶다. 난 원래 안 돌리는 파기 때문에 돌려먹는 파의 입장은 또 다를지도..`,
+      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0030_P105.jpg",
+      tags: [Tag.Heavy, Tag.Chewy],
     }
   ] },
   { id: "P106", name: "더큰)스팸김치볶음밥",     brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P106.jpg", reviews: [
@@ -145,6 +162,13 @@ const SEED_DATA: {
       rating: 4,
       comment: `김치볶음밥은 원래 맛있고 스팸도 원래 맛있다. 그치만 스팸이 많이 들어있진 않아서 조금 아쉬웠다.`,
       imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0010_P106.jpg",
+    },
+    {
+      id: "R0029",
+      rating: 4.0,
+      comment: `짭짤하고 맛있음. 내용물이 알차네요`,
+      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0029_P106.jpg",
+      tags: [Tag.Salty, Tag.Heavy],
     }
   ] },
   { id: "P107", name: "더큰)전주비빔참치마요",   brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P107.jpg", reviews: [] },
@@ -187,6 +211,7 @@ const SEED_DATA: {
       rating: 0.5,
       comment: `리챔 맛도 별로고.... 참치가 비림... ㅠㅠ`,
       imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0026_P110.jpg",
+      tags: [Tag.Fishy]
     }
   ] },
   { id: "P111", name: "더큰)참치마요",           brand: Brand.GS25, price: 1700, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P111.jpg", reviews: [
@@ -195,6 +220,13 @@ const SEED_DATA: {
       rating: 4,
       comment: `라면이랑 먹을때 이만한게없다`,
       tags: [Tag.withRamyeon],
+    },
+    {
+      id: "R0032",
+      rating: 3.5,
+      comment: `언제나 스탠다드한 맛. 그치만 딱 그정도인 거 같긴 함. 라면이랑 같이 안 먹으니까 좀 슴슴한듯`,
+      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0032_P111.jpg",
+      tags: [Tag.Normal, Tag.Mild, Tag.withRamyeon],
     }
   ] },
   { id: "P112", name: "더큰)불닭콘치즈",         brand: Brand.GS25, price: 1800,  imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P112.jpg", reviews: [
@@ -213,7 +245,7 @@ const SEED_DATA: {
       id: "R0021",
       rating: 4.5,
       comment: `랍스터살도 생각보다 실하고 무엇보다 밥이 맛있어서 내용물 없는 부분도 맛있게 먹을 수 있음`,
-      tags: [Tag.Delicious, Tag.Heavy],
+      tags: [Tag.Heavy],
     }
   ] },
   { id: "P203", name: "흑백)최강록날치알명란",   brand: Brand.GS25, price: 1700, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P203.jpg", reviews: [] },
@@ -237,8 +269,8 @@ const SEED_DATA: {
   ] },
 
   // ── 커플 시리즈 ──────────────────────────────
-  { id: "P401", name: "커플)매콤제육&콘참치",    brand: Brand.GS25, price: 2300, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P401.jpg", reviews: [] },
-  { id: "P402", name: "커플)바삭김참치&불고기1", brand: Brand.GS25, price: 2300, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P402.jpg", reviews: [] },
+  { id: "P401", name: "커플)매콤제육&콘참치",    brand: Brand.GS25, price: 2300, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P401.jpg", reviews: [] },
+  { id: "P402", name: "커플)바삭김참치&불고기1", brand: Brand.GS25, price: 2300, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P402.jpg", reviews: [] },
 ];
 
 // -------------------------------------------------------
