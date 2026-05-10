@@ -1,19 +1,19 @@
 export type Tag =
-  | "withDrink" | "Delicious" | "Salty" | "Heavy" | "Mild"
-  | "Spicy" | "Normal" | "Dry" | "Sweety" | "withRamyeon" | "Resonable";
+  | "withDrink" | "Salty" | "Heavy" | "Mild"
+  | "Spicy" | "Normal" | "Dry" | "Sweety" | "withRamyeon" | "Chewy" | "Fishy";
 
 export const TAG_LABEL: Record<Tag, string> = {
   withDrink:   "음료와 함께",
-  Delicious:   "맛있는",
-  Salty:       "짠맛",
-  Heavy:       "든든한",
-  Mild:        "담백한",
-  Spicy:       "매운맛",
-  Normal:      "무난한",
-  Dry:         "퍽퍽한",
-  Sweety:      "단맛",
-  withRamyeon: "라면과 함께",
-  Resonable:   "가성비",
+  Salty:       "짭짤",
+  Heavy:       "든든",
+  Mild:        "슴슴",
+  Spicy:       "매콤",
+  Normal:      "무난",
+  Dry:         "퍽퍽",
+  Sweety:      "달달",
+  withRamyeon: "라면이랑",
+  Chewy:       "씹는맛",
+  Fishy:       "비림",
 };
 
 export type Brand = "GS25" | "SEVEN_ELEVEN" | "EMART24" | "CU";

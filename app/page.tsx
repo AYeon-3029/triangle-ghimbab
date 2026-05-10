@@ -19,7 +19,7 @@ const FILTER_TAGS: Array<{ value: Tag | "전체"; label: string }> = [
   { value: "전체",      label: "전체" },
   { value: "Spicy",     label: TAG_LABEL.Spicy },
   { value: "Heavy",     label: TAG_LABEL.Heavy },
-  { value: "Resonable", label: TAG_LABEL.Resonable },
+  { value: "Chewy",     label: TAG_LABEL.Chewy },
   { value: "Mild",      label: TAG_LABEL.Mild },
   { value: "Salty",     label: TAG_LABEL.Salty },
   { value: "Sweety",    label: TAG_LABEL.Sweety },

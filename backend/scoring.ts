@@ -2,7 +2,7 @@ import { Tag, Tier } from "@prisma/client";
 
 // 티어 분류 기준
 export const TIER_CONFIG = {
-  MIN_REVIEWS: 3,   // 이 개수 미만이면 Unknown 처리
+  MIN_REVIEWS: 1,   // 이 개수 미만이면 Unknown 처리
   S: 50,            // score >= 50
   A: 40,            // score >= 40
   B: 30,            // score >= 30
