@@ -81,7 +81,7 @@ const SEED_DATA: {
       tags: [Tag.withDrink, Tag.Dry],
     }
   ] },
-  { id: "P008", name: "삼각)스팸김치볶음밥",         brand: Brand.GS25, price: 1400, isNew: true, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P008.jpg", reviews: [
+  { id: "P008", name: "삼각)스팸김치볶음밥",         brand: Brand.GS25, price: 1400, isNew: true, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/p008.jpg", reviews: [
     {
       id: "R0031",
       rating: 4.5,
@@ -89,7 +89,7 @@ const SEED_DATA: {
       imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0031_P008.jpg",
     }
   ] },
-  { id: "P009", name: "삼각)참치김치볶음밥",         brand: Brand.GS25, price: 1400, isNew: true, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P009.jpg", reviews: [
+  { id: "P009", name: "삼각)참치김치볶음밥",         brand: Brand.GS25, price: 1400, isNew: true, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/p009.jpg", reviews: [
   ] },
 
   // ── 더큰 시리즈 ──────────────────────────────
