@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const TAG_GROUPS: { group: string; items: Tag[] }[] = [
-  { group: "맛",   items: ["Spicy", "Salty", "Sweety", "Mild", "Delicious", "Normal"] },
-  { group: "식감", items: ["Heavy", "Dry"] },
-  { group: "기타", items: ["withDrink", "withRamyeon", "Resonable"] },
+  { group: "맛",   items: ["Spicy", "Salty", "Sweety", "Mild", "Normal", "Fishy"] },
+  { group: "식감", items: ["Heavy", "Dry", "Chewy"] },
+  { group: "기타", items: ["withDrink", "withRamyeon"] },
 ];
 
 const MONO: React.CSSProperties = { fontFamily: "var(--font-mono)" };
@@ -31,19 +31,20 @@ export default function ReviewWritePage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
+  const isBlank = id === "_";
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [selectedId, setSelectedId] = useState<string>(id);
-  const product = products.find((p) => p.id === selectedId) ?? products[0];
+  const [selectedId, setSelectedId] = useState<string>(isBlank ? "" : id);
+  const product = products.find((p) => p.id === selectedId);
 
   useEffect(() => {
     fetchProducts().then((data) => {
       setProducts(data);
-      if (data.length > 0 && !data.some((p) => p.id === id)) {
+      if (!isBlank && data.length > 0 && !data.some((p) => p.id === id)) {
         setSelectedId(data[0].id);
       }
     });
-  }, [id]);
+  }, [id, isBlank]);
 
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -54,7 +55,7 @@ export default function ReviewWritePage() {
   const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  if (!product) {
+  if (!isBlank && !product && products.length > 0) {
     return <div style={{ padding: 32 }}>제품을 찾을 수 없습니다.</div>;
   }
 
@@ -71,6 +72,10 @@ export default function ReviewWritePage() {
   }
 
   async function handleSubmit() {
+    if (!selectedId) {
+      alert("제품을 선택해주세요.");
+      return;
+    }
     if (rating === 0) {
       alert("별점을 선택해주세요.");
       return;
@@ -168,19 +173,23 @@ export default function ReviewWritePage() {
               flexShrink: 0,
             }}
           >
-            {product.imageUrl ? (
+            {product?.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={product.imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             ) : (
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--mute)" }}>{product.name[0]}</span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--mute)" }}>{product?.name[0] ?? "?"}</span>
             )}
           </div>
           <div style={{ flex: 1 }}>
             <div style={LABEL}>리뷰 작성 중 (탭하여 변경)</div>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 2 }}>
-              <span style={{ fontSize: 13, fontWeight: 600 }}>{product.name}</span>
-              <span style={{ ...LABEL, fontSize: 10 }}>{product.price.toLocaleString()}원</span>
-            </div>
+            {product ? (
+              <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 2 }}>
+                <span style={{ fontSize: 13, fontWeight: 600 }}>{product.name}</span>
+                <span style={{ ...LABEL, fontSize: 10 }}>{product.price.toLocaleString()}원</span>
+              </div>
+            ) : (
+              <div style={{ fontSize: 13, color: "var(--mute)", marginTop: 2 }}>제품을 선택해주세요</div>
+            )}
           </div>
           <span style={{ color: "var(--mute)", fontSize: 12 }}>▾</span>
         </DropdownMenuTrigger>
@@ -196,7 +205,13 @@ export default function ReviewWritePage() {
                 background: p.id === selectedId ? "var(--fill)" : undefined,
               }}
             >
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--mute)" }}>{p.name[0]}</span>
+              <div style={{ width: 28, height: 28, flexShrink: 0, border: "1px solid var(--line-soft)", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--fill-2)" }}>
+                {p.imageUrl
+                  // eslint-disable-next-line @next/next/no-img-element
+                  ? <img src={p.imageUrl} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  : <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--mute)" }}>{p.name[0]}</span>
+                }
+              </div>
               <span style={{ flex: 1 }}>{p.name}</span>
               <span style={{ ...LABEL, fontSize: 10 }}>{p.price.toLocaleString()}원</span>
             </DropdownMenuItem>
