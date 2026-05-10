@@ -269,7 +269,7 @@ export default function ProductPage() {
                 <Stars value={r.rating} size={11} />
                 <span style={{ fontSize: 11, fontWeight: 600 }}>{r.rating.toFixed(1)}</span>
                 {r.isPurchase && (
-                  <span style={{ ...MONO, fontSize: 9, color: "var(--accent)", border: "1px solid var(--accent)", padding: "1px 4px" }}>재구매</span>
+                  <span style={{ fontSize: 9, color: "var(--accent)", border: "1px solid var(--accent)", padding: "2px 4px", lineHeight: 1, display: "inline-flex", alignItems: "center" }}>재구매</span>
                 )}
               </div>
               {r.tags.length > 0 && (
