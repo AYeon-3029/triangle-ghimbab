@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import SearchBar from "./components/SearchBar";
 import TagFilter from "./components/TagFilter";
 import ProductCard from "./components/ProductCard";
-import { PRODUCTS } from "./lib/data";
+import { TAG_LABEL, type Tag, type Product } from "./lib/data";
+import { fetchProducts } from "./lib/supabase";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +15,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-const FILTER_TAGS = ["전체", "매운맛", "든든한", "가성비", "클래식", "고소한"];
+const FILTER_TAGS: Array<{ value: Tag | "전체"; label: string }> = [
+  { value: "전체",      label: "전체" },
+  { value: "Spicy",     label: TAG_LABEL.Spicy },
+  { value: "Heavy",     label: TAG_LABEL.Heavy },
+  { value: "Chewy",     label: TAG_LABEL.Chewy },
+  { value: "Mild",      label: TAG_LABEL.Mild },
+  { value: "Salty",     label: TAG_LABEL.Salty },
+  { value: "Sweety",    label: TAG_LABEL.Sweety },
+];
 
 const LABEL: React.CSSProperties = {
   fontFamily: "var(--font-mono)",
@@ -26,20 +35,36 @@ const LABEL: React.CSSProperties = {
 
 export default function HomePage() {
   const [period, setPeriod] = useState("전체");
-  const [activeFilter, setActiveFilter] = useState("전체");
+  const [activeFilter, setActiveFilter] = useState<Tag | "전체">("전체");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtered = PRODUCTS.filter((p) => {
+  useEffect(() => {
+    fetchProducts().then((data) => {
+      setProducts(data);
+      setLoading(false);
+    });
+  }, []);
+
+  const filtered = products.filter((p) => {
     if (activeFilter === "전체") return true;
-    return p.tags.includes(activeFilter);
+    return p.tags.includes(activeFilter as Tag);
   });
-  const sorted = [...filtered].sort((a, b) => b.rating - a.rating);
-  const maxReviews = Math.max(...PRODUCTS.map((p) => p.reviewCount));
+  const sorted = [...filtered].sort((a, b) => b.avgRating - a.avgRating);
+  const maxReviews = products.length > 0 ? Math.max(...products.map((p) => p.reviewCount)) : 1;
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Navbar />
       <SearchBar />
-      <TagFilter items={FILTER_TAGS} value={activeFilter} onChange={setActiveFilter} />
+      <TagFilter
+        items={FILTER_TAGS.map((f) => f.label)}
+        value={FILTER_TAGS.find((f) => f.value === activeFilter)?.label ?? "전체"}
+        onChange={(label) => {
+          const found = FILTER_TAGS.find((f) => f.label === label);
+          setActiveFilter(found?.value ?? "전체");
+        }}
+      />
 
       <main style={{ flex: 1, padding: "0 16px 80px" }}>
         {/* 섹션 헤더 */}
@@ -102,14 +127,24 @@ export default function HomePage() {
         </div>
 
         {/* 랭킹 행 */}
-        {sorted.map((product, i) => (
-          <ProductCard
-            key={product.id}
-            product={product}
-            rank={i + 1}
-            maxReviews={maxReviews}
-          />
-        ))}
+        {loading ? (
+          <div style={{ padding: "32px 0", textAlign: "center", color: "var(--mute)", fontFamily: "var(--font-mono)", fontSize: 11 }}>
+            로딩 중...
+          </div>
+        ) : sorted.length === 0 ? (
+          <div style={{ padding: "32px 0", textAlign: "center", color: "var(--mute)", fontFamily: "var(--font-mono)", fontSize: 11 }}>
+            제품이 없습니다.
+          </div>
+        ) : (
+          sorted.map((product, i) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              rank={i + 1}
+              maxReviews={maxReviews}
+            />
+          ))
+        )}
       </main>
     </div>
   );

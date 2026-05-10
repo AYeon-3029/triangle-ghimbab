@@ -58,7 +58,7 @@ export default function Navbar({ right }: { right?: ReactNode }) {
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         {right ?? (
           <Link
-            href="/products/1/review"
+            href="/products/_/review"
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: 10,

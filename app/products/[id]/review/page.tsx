@@ -1,15 +1,21 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Star, StarHalf } from "lucide-react";
-import { PRODUCTS } from "../../../lib/data";
+import { TAG_LABEL, type Tag, type Product } from "../../../lib/data";
+import { fetchProducts, insertReview, uploadReviewImage } from "../../../lib/supabase";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const TAG_GROUPS = [
-  { group: "맛",       items: ["매운맛", "짠맛", "단맛", "고소한", "담백한"] },
-  { group: "식감",     items: ["든든한", "촉촉한", "바삭", "쫄깃"] },
-  { group: "가격",     items: ["가성비", "가격대비아쉬움"] },
-  { group: "식사 적합", items: ["아침", "점심", "야식", "술안주"] },
+const TAG_GROUPS: { group: string; items: Tag[] }[] = [
+  { group: "맛",   items: ["Spicy", "Salty", "Sweety", "Mild", "Normal", "Fishy"] },
+  { group: "식감", items: ["Heavy", "Dry", "Chewy"] },
+  { group: "기타", items: ["withDrink", "withRamyeon"] },
 ];
 
 const MONO: React.CSSProperties = { fontFamily: "var(--font-mono)" };
@@ -24,24 +30,38 @@ const LABEL: React.CSSProperties = {
 export default function ReviewWritePage() {
   const params = useParams();
   const router = useRouter();
-  const id = Number(params.id);
-  const product = PRODUCTS.find((p) => p.id === id);
+  const id = params.id as string;
+  const isBlank = id === "_";
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedId, setSelectedId] = useState<string>(isBlank ? "" : id);
+  const product = products.find((p) => p.id === selectedId);
+
+  useEffect(() => {
+    fetchProducts().then((data) => {
+      setProducts(data);
+      if (!isBlank && data.length > 0 && !data.some((p) => p.id === id)) {
+        setSelectedId(data[0].id);
+      }
+    });
+  }, [id, isBlank]);
 
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [body, setBody] = useState("");
-  const [repurchase, setRepurchase] = useState<boolean | null>(null);
+  const [isPurchase, setIsPurchase] = useState<boolean | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
+  const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  if (!product) {
+  if (!isBlank && !product && products.length > 0) {
     return <div style={{ padding: 32 }}>제품을 찾을 수 없습니다.</div>;
   }
 
   const displayRating = hoverRating || rating;
 
-  function toggleTag(tag: string) {
+  function toggleTag(tag: Tag) {
     setSelectedTags((prev) =>
       prev.includes(tag)
         ? prev.filter((t) => t !== tag)
@@ -51,12 +71,33 @@ export default function ReviewWritePage() {
     );
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
+    if (!selectedId) {
+      alert("제품을 선택해주세요.");
+      return;
+    }
     if (rating === 0) {
       alert("별점을 선택해주세요.");
       return;
     }
-    alert("리뷰가 제출되었습니다. 감사합니다! \n (Supabase 연결 후 실제 저장 예정)");
+    setSubmitting(true);
+    let imageUrl: string | null = null;
+    if (photos[0]) {
+      imageUrl = await uploadReviewImage(photos[0]);
+    }
+    const result = await insertReview({
+      productId: selectedId,
+      rating,
+      tags: selectedTags,
+      comment: body.trim() || null,
+      isPurchase: isPurchase ?? false,
+      imageUrl,
+    });
+    setSubmitting(false);
+    if (!result.ok) {
+      alert("리뷰 제출에 실패했습니다. 다시 시도해주세요.");
+      return;
+    }
     router.back();
   }
 
@@ -97,42 +138,86 @@ export default function ReviewWritePage() {
         <span style={{ fontSize: 13, fontWeight: 600 }}>리뷰 작성</span>
         <button
           onClick={handleSubmit}
-          style={{ ...MONO, fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--accent)" }}
+          style={{ ...MONO, fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--accent))" }}
         >
           제출
         </button>
       </div>
 
-      {/* 제품 미니 카드 */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          padding: "10px 16px",
-          borderBottom: "1px solid var(--line-soft)",
-          background: "var(--fill-2)",
-        }}
-      >
-        <div
+      {/* 제품 선택 */}
+      <DropdownMenu>
+        <DropdownMenuTrigger
           style={{
-            width: 40,
-            height: 40,
-            border: "1px solid var(--line-soft)",
-            background: "var(--fill-2)",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
-            fontSize: 24,
+            gap: 10,
+            padding: "10px 16px",
+            borderBottom: "1px solid var(--line-soft)",
+            background: "var(--fill-2)",
+            width: "100%",
+            border: "none",
+            cursor: "pointer",
+            textAlign: "left",
           }}
         >
-          {product.emoji}
-        </div>
-        <div>
-          <div style={LABEL}>리뷰 작성 중</div>
-          <div style={{ fontSize: 13, fontWeight: 600, marginTop: 2 }}>{product.name}</div>
-        </div>
-      </div>
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              border: "1px solid var(--line-soft)",
+              background: "var(--fill-2)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "hidden",
+              flexShrink: 0,
+            }}
+          >
+            {product?.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={product.imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--mute)" }}>{product?.name[0] ?? "?"}</span>
+            )}
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={LABEL}>리뷰 작성 중 (탭하여 변경)</div>
+            {product ? (
+              <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: 2 }}>
+                <span style={{ fontSize: 13, fontWeight: 600 }}>{product.name}</span>
+                <span style={{ ...LABEL, fontSize: 10 }}>{product.price.toLocaleString()}원</span>
+              </div>
+            ) : (
+              <div style={{ fontSize: 13, color: "var(--mute)", marginTop: 2 }}>제품을 선택해주세요</div>
+            )}
+          </div>
+          <span style={{ color: "var(--mute)", fontSize: 12 }}>▾</span>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" style={{ fontFamily: "var(--font-sans)", fontSize: 13 }}>
+          {products.map((p) => (
+            <DropdownMenuItem
+              key={p.id}
+              onClick={() => setSelectedId(p.id)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                background: p.id === selectedId ? "var(--fill)" : undefined,
+              }}
+            >
+              <div style={{ width: 28, height: 28, flexShrink: 0, border: "1px solid var(--line-soft)", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--fill-2)" }}>
+                {p.imageUrl
+                  // eslint-disable-next-line @next/next/no-img-element
+                  ? <img src={p.imageUrl} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  : <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--mute)" }}>{p.name[0]}</span>
+                }
+              </div>
+              <span style={{ flex: 1 }}>{p.name}</span>
+              <span style={{ ...LABEL, fontSize: 10 }}>{p.price.toLocaleString()}원</span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       {/* 폼 */}
       <div style={{ flex: 1, padding: "14px 16px 24px", overflowY: "auto" }}>
@@ -156,11 +241,11 @@ export default function ReviewWritePage() {
                 <div key={star} style={{ position: "relative", width: 40, height: 40 }}>
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", pointerEvents: "none" }}>
                     {isFull
-                      ? <Star size={32} fill="#000000" stroke="none" />
+                      ? <Star size={32} fill="var(--accent)" stroke="none" />
                       : isHalf
                       ? <div style={{ position: "relative", width: 32, height: 32 }}>
                           <Star size={32} fill="var(--line-soft)" stroke="none" style={{ position: "absolute", top: 0, left: 0 }} />
-                          <StarHalf size={32} fill="#000000" stroke="none" style={{ position: "absolute", top: 0, left: 0 }} />
+                          <StarHalf size={32} fill="var(--accent)" stroke="none" style={{ position: "absolute", top: 0, left: 0 }} />
                         </div>
                       : <Star size={32} fill="var(--line-soft)" stroke="none" />}
                   </div>
@@ -287,7 +372,7 @@ export default function ReviewWritePage() {
                           fontFamily: "var(--font-sans)",
                         }}
                       >
-                        {on ? "✓ " : ""}{t}
+                        {on ? "✓ " : ""}{TAG_LABEL[t]}
                       </button>
                     );
                   })}
@@ -333,13 +418,13 @@ export default function ReviewWritePage() {
             {[true, false].map((val) => (
               <button
                 key={String(val)}
-                onClick={() => setRepurchase(val)}
+                onClick={() => setIsPurchase(val)}
                 style={{
                   flex: 1,
                   padding: "10px 0",
                   border: "1px solid var(--line)",
-                  background: repurchase === val ? "var(--line)" : "var(--paper)",
-                  color: repurchase === val ? "var(--paper)" : "var(--ink)",
+                  background: isPurchase === val ? "var(--line)" : "var(--paper)",
+                  color: isPurchase === val ? "var(--paper)" : "var(--ink)",
                   fontSize: 12,
                   cursor: "pointer",
                   fontFamily: "var(--font-sans)",
@@ -362,19 +447,20 @@ export default function ReviewWritePage() {
       >
         <button
           onClick={handleSubmit}
+          disabled={submitting}
           style={{
             width: "100%",
             padding: "12px 0",
-            background: "var(--line)",
+            background: submitting ? "var(--mute)" : "var(--line)",
             color: "var(--paper)",
             border: "none",
             fontSize: 14,
             fontWeight: 600,
             fontFamily: "var(--font-sans)",
-            cursor: "pointer",
+            cursor: submitting ? "not-allowed" : "pointer",
           }}
         >
-          리뷰 제출하기
+          {submitting ? "제출 중..." : "리뷰 제출하기"}
         </button>
       </div>
     </div>
