@@ -16,6 +16,12 @@ function formatDate(iso: string): string {
   return `${Math.floor(d / 30)}달 전`;
 }
 
+function computeRepurchasePct(reviews: ReviewRow[]): number | null {
+  if (reviews.length === 0) return null;
+  const count = reviews.filter((r) => r.isPurchase).length;
+  return Math.round((count / reviews.length) * 100);
+}
+
 function computeTagAggregate(reviews: ReviewRow[]): { tag: Tag; pct: number }[] {
   if (reviews.length === 0) return [];
   const counts: Partial<Record<Tag, number>> = {};
@@ -84,6 +90,7 @@ export default function ProductPage() {
   }
 
   const tagAggregate = computeTagAggregate(reviews);
+  const repurchasePct = computeRepurchasePct(reviews);
   const sorted = sortReviews(reviews, sort);
 
   return (
@@ -176,6 +183,9 @@ export default function ProductPage() {
             <span style={{ fontSize: 14, fontWeight: 600 }}>{product.avgRating.toFixed(1)}</span>
             <span style={{ ...LABEL, fontSize: 11 }}>· 리뷰 {product.reviewCount.toLocaleString()}</span>
             <span style={{ ...LABEL, fontSize: 11 }}>· {product.price.toLocaleString()}원</span>
+            {repurchasePct !== null && (
+              <span style={{ ...LABEL, fontSize: 11 }}>· 재구매 {repurchasePct}%</span>
+            )}
           </div>
         </div>
 
@@ -258,6 +268,9 @@ export default function ProductPage() {
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
                 <Stars value={r.rating} size={11} />
                 <span style={{ fontSize: 11, fontWeight: 600 }}>{r.rating.toFixed(1)}</span>
+                {r.isPurchase && (
+                  <span style={{ ...MONO, fontSize: 9, color: "var(--accent)", border: "1px solid var(--accent)", padding: "1px 4px" }}>재구매</span>
+                )}
               </div>
               {r.tags.length > 0 && (
                 <div style={{ display: "flex", gap: 4, marginTop: 6, flexWrap: "wrap" }}>
