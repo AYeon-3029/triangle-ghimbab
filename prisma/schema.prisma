@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Brand {
+  GS25
+  SEVEN_ELEVEN
+  EMART24
+  CU
+}
+
+enum Tag {
+  withDrink
+  Delicious
+  Salty
+  Heavy
+  Mild
+  Spicy
+  Normal
+  Dry
+  Sweety
+  withRamyeon
+  Resonable
+}
+
+enum Tier {
+  S
+  A
+  B
+  C
+  Unknown
+}
+
+model Product {
+  id        String   @id @default(cuid())
+  name      String
+  brand     Brand
+  imageUrl  String
+  avgRating Float    @default(0)
+  score     Float    @default(0)
+  tier      Tier     @default(Unknown)
+  tagCounts Json     @default("{}")
+  isNew     Boolean  @default(false)
+  price     Int      @default(0)
+  reviews   Review[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("products")
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  rating     Float
+  comment    String?
+  imageUrl   String?
+  tags       Tag[]
+  isPurchase Boolean  @default(false)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("reviews")
+}

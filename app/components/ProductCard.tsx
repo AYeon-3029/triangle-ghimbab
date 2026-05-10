@@ -1,7 +1,8 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import TierBadge from "./TierBadge";
 import Stars from "./Stars";
 import type { Product } from "../lib/data";
+import { TAG_LABEL } from "../lib/data";
 
 export type { Product } from "../lib/data";
 
@@ -51,12 +52,19 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 20,
               border: "1px solid var(--line-soft)",
               background: "var(--fill-2)",
+              overflow: "hidden",
             }}
           >
-            {product.emoji}
+            {product.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={product.imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--mute)" }}>
+                {product.name[0]}
+              </span>
+            )}
           </div>
           <div style={{ minWidth: 0 }}>
             <div
@@ -70,17 +78,14 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
             >
               {product.name}
             </div>
-            <div style={{ display: "flex", gap: 3, marginTop: 2 }}>
-              {product.tags.slice(0, 3).map((t) => (
-                <span
-                  key={t}
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: 9,
-                    color: "var(--mute)",
-                  }}
-                >
-                  #{t}
+            <div style={{ display: "flex", gap: 3, marginTop: 2, alignItems: "center" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--mute)" }}>
+                {product.price.toLocaleString()}원
+              </span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--line-soft)" }}>·</span>
+              {product.tags.slice(0, 2).map((t) => (
+                <span key={t} style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--mute)" }}>
+                  #{TAG_LABEL[t]}
                 </span>
               ))}
             </div>
@@ -115,9 +120,9 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
 
         {/* 평점 */}
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 13, fontWeight: 600 }}>{product.rating.toFixed(1)}</div>
+          <div style={{ fontSize: 13, fontWeight: 600 }}>{product.avgRating.toFixed(1)}</div>
           <div style={{ marginTop: 2 }}>
-            <Stars value={product.rating} size={9} />
+            <Stars value={product.avgRating} size={9} />
           </div>
         </div>
       </div>

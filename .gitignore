@@ -41,7 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 CLAUDE.md
-.claude/*
+.claude/
 claude_design/
 .vercel
 .env*.local

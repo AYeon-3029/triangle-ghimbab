@@ -5,7 +5,7 @@ const STYLES: Record<Tier, { bg: string; color: string; border: string }> = {
   A: { bg: "var(--paper)",   color: "var(--ink)",    border: "var(--line)"      },
   B: { bg: "var(--fill)",    color: "var(--ink)",    border: "var(--line)"      },
   C: { bg: "var(--fill-2)",  color: "var(--mute)",   border: "var(--line-soft)" },
-  "?": { bg: "var(--fill-2)", color: "var(--mute)",  border: "var(--line-soft)" },
+  Unknown: { bg: "var(--fill-2)", color: "var(--mute)", border: "var(--line-soft)" },
 };
 
 export default function TierBadge({ tier }: { tier: Tier }) {
