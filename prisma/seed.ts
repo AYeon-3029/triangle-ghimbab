@@ -71,7 +71,7 @@ const SEED_DATA: {
       tags: [Tag.Heavy],
     }
   ] },
-  { id: "P006", name: "삼각)더바삭한김참치마요1",brand: Brand.GS25, price: 1200, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P006.jpg", reviews: [] },
+  { id: "P006", name: "삼각)더바삭한김참치마요",brand: Brand.GS25, price: 1200, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P006.jpg", reviews: [] },
   { id: "P007", name: "삼각)新전주비빔",         brand: Brand.GS25, price: 1200, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P007.jpg", reviews: [
     {
       id: "R0001",
@@ -240,7 +240,7 @@ const SEED_DATA: {
 
   // ── 흑백 시리즈 ──────────────────────────────
   { id: "P201", name: "흑백)파파베이컨리조또",   brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P201.jpg", reviews: [] },
-  { id: "P202", name: "흑백)최유강랍스터볶음밥1",brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P202.jpg", reviews: [
+  { id: "P202", name: "흑백)최유강랍스터볶음밥",brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P202.jpg", reviews: [
     {
       id: "R0021",
       rating: 4.5,
@@ -270,7 +270,7 @@ const SEED_DATA: {
 
   // ── 커플 시리즈 ──────────────────────────────
   { id: "P401", name: "커플)매콤제육&콘참치",    brand: Brand.GS25, price: 2300, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P401.jpg", reviews: [] },
-  { id: "P402", name: "커플)바삭김참치&불고기1", brand: Brand.GS25, price: 2300, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P402.jpg", reviews: [] },
+  { id: "P402", name: "커플)바삭김참치&불고기", brand: Brand.GS25, price: 2300, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P402.jpg", reviews: [] },
 ];
 
 // -------------------------------------------------------
