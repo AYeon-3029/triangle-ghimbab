@@ -161,7 +161,7 @@ export default function ProductPage() {
               marginTop: 12,
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
+              alignItems: "flex-end",
               gap: 8,
             }}
           >
@@ -169,6 +169,7 @@ export default function ProductPage() {
             <span style={{ fontSize: 22, fontWeight: 600, letterSpacing: "-0.02em" }}>
               {product.name}
             </span>
+            <span style={{ ...LABEL, fontSize: 11 }}>{product.price.toLocaleString()}원</span>
           </div>
           <div
             style={{
@@ -182,7 +183,6 @@ export default function ProductPage() {
             <Stars value={product.avgRating} size={14} />
             <span style={{ fontSize: 14, fontWeight: 600 }}>{product.avgRating.toFixed(1)}</span>
             <span style={{ ...LABEL, fontSize: 11 }}>· 리뷰 {product.reviewCount.toLocaleString()}</span>
-            <span style={{ ...LABEL, fontSize: 11 }}>· {product.price.toLocaleString()}원</span>
             {repurchasePct !== null && (
               <span style={{ ...LABEL, fontSize: 11 }}>· 재구매 {repurchasePct}%</span>
             )}
