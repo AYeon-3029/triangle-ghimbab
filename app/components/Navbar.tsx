@@ -1,4 +1,5 @@
 ﻿import Link from "next/link";
+import Image from "next/image";
 import type { ReactNode } from "react";
 
 export default function Navbar({ right }: { right?: ReactNode }) {
@@ -27,30 +28,8 @@ export default function Navbar({ right }: { right?: ReactNode }) {
           flexShrink: 0,
         }}
       >
-        <div
-          style={{
-            width: 22,
-            height: 22,
-            border: "1px solid var(--line)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontFamily: "var(--font-mono)",
-            fontSize: 11,
-            fontWeight: 700,
-            color: "var(--ink)",
-          }}
-        >
-          ▲
-        </div>
-        <span
-          style={{
-            fontWeight: 600,
-            fontSize: 14,
-            letterSpacing: "-0.02em",
-            color: "var(--ink)",
-          }}
-        >
+        <Image src="/logo.png" alt="삼각편대" width={45} height={45} style={{ objectFit: "contain" }} />
+        <span style={{ fontWeight: 700, fontSize: 17, letterSpacing: "-0.02em", color: "var(--ink)", marginTop: 5 }}>
           삼각편대
         </span>
       </Link>
