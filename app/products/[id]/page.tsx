@@ -7,6 +7,7 @@ import TierBadge from "../../components/TierBadge";
 import Stars from "../../components/Stars";
 import { TAG_LABEL, type Tag, type Product } from "../../lib/data";
 import { fetchProduct, fetchReviews, type ReviewRow } from "../../lib/supabase";
+import { Badge } from "@/components/ui/badge";
 
 function formatDate(iso: string): string {
   const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
@@ -269,7 +270,7 @@ export default function ProductPage() {
                 <Stars value={r.rating} size={11} />
                 <span style={{ fontSize: 11, fontWeight: 600 }}>{r.rating.toFixed(1)}</span>
                 {r.isPurchase && (
-                  <span style={{ fontSize: 9, color: "var(--accent)", border: "1px solid var(--accent)", padding: "2px 4px", lineHeight: 1, display: "inline-flex", alignItems: "center" }}>재구매</span>
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-auto border-[var(--accent)] text-[var(--accent)] rounded-none">재구매</Badge>
                 )}
               </div>
               {r.tags.length > 0 && (

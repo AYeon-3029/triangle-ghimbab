@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 const TAG_GROUPS: { group: string; items: Tag[] }[] = [
   { group: "맛",   items: ["Spicy", "Salty", "Sweety", "Mild", "Normal", "Fishy"] },
@@ -73,11 +74,11 @@ export default function ReviewWritePage() {
 
   async function handleSubmit() {
     if (!selectedId) {
-      alert("제품을 선택해주세요.");
+      toast.error("제품을 선택해주세요.");
       return;
     }
     if (rating === 0) {
-      alert("별점을 선택해주세요.");
+      toast.error("별점을 선택해주세요.");
       return;
     }
     setSubmitting(true);
@@ -95,9 +96,10 @@ export default function ReviewWritePage() {
     });
     setSubmitting(false);
     if (!result.ok) {
-      alert("리뷰 제출에 실패했습니다. 다시 시도해주세요.");
+      toast.error("리뷰 제출에 실패했습니다. 다시 시도해주세요.");
       return;
     }
+    toast.success("리뷰가 등록됐습니다!");
     router.back();
   }
 
