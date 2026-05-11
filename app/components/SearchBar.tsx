@@ -1,14 +1,20 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SearchBar({
   placeholder = "삼각김밥 이름·재료 검색",
+  initialValue = "",
 }: {
   placeholder?: string;
+  initialValue?: string;
 }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialValue);
+
+  useEffect(() => {
+    setQuery(initialValue);
+  }, [initialValue]);
   const router = useRouter();
 
   function handleSubmit(e: React.FormEvent) {
