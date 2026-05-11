@@ -7,13 +7,6 @@ import TagFilter from "./components/TagFilter";
 import ProductCard from "./components/ProductCard";
 import { TAG_LABEL, type Tag, type Product } from "./lib/data";
 import { fetchProducts } from "./lib/supabase";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const FILTER_TAGS: Array<{ value: Tag | "전체"; label: string }> = [
   { value: "전체",      label: "전체" },
@@ -34,7 +27,6 @@ const LABEL: React.CSSProperties = {
 };
 
 export default function HomePage() {
-  const [period, setPeriod] = useState("전체");
   const [activeFilter, setActiveFilter] = useState<Tag | "전체">("전체");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,33 +71,6 @@ export default function HomePage() {
           <span style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.015em" }}>
             삼각김밥 티어리스트
           </span>
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              style={{
-                fontFamily: "var(--font-mono)",
-                fontSize: 10,
-                color: "var(--mute)",
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 4,
-              }}
-            >
-              {period} ▾
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="!w-auto min-w-0 p-0.5 rounded-sm text-center" style={{ fontFamily: "var(--font-mono)", fontSize: 10 }}>
-              <DropdownMenuRadioGroup
-                value={period}
-                onValueChange={(v) => v && setPeriod(v as string)}
-              >
-                <DropdownMenuRadioItem value="주간" className="py-0.5 px-2">주간</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="월간" className="py-0.5 px-2">월간</DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="전체" className="py-0.5 px-2">전체</DropdownMenuRadioItem>
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
 
         {/* 테이블 헤더 */}

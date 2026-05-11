@@ -8,6 +8,13 @@ import Stars from "../../components/Stars";
 import { TAG_LABEL, type Tag, type Product } from "../../lib/data";
 import { fetchProduct, fetchReviews, type ReviewRow } from "../../lib/supabase";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 function formatDate(iso: string): string {
   const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
@@ -131,8 +138,8 @@ export default function ProductPage() {
         <div
           style={{
             padding: "20px 16px 12px",
+            border: "1px solid var(--line-soft)",
             textAlign: "center",
-            borderBottom: "1px solid var(--line-soft)",
           }}
         >
           <div
@@ -191,7 +198,7 @@ export default function ProductPage() {
         </div>
 
         {/* 키워드 집계 */}
-        <div style={{ padding: "12px 16px" }}>
+        <div style={{ padding: "12px 16px"}}>
           <div style={LABEL}>이 제품의 키워드</div>
           <div style={{ display: "grid", gap: 5, marginTop: 8 }}>
             {tagAggregate.map((t) => (
@@ -227,32 +234,39 @@ export default function ProductPage() {
         <div
           style={{
             display: "flex",
-            borderTop: "1px solid var(--line)",
-            borderBottom: "1px solid var(--line)",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "6px 16px",
+            borderTop: "1px solid var(--mute)",
+            borderBottom: "1px solid var(--mute)",
           }}
         >
-          {SORT_OPTS.map((o, i) => (
-            <button
-              key={o}
-              onClick={() => setSort(o)}
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 10}}>
+            리뷰 {reviews.length}건
+          </span>
+          <DropdownMenu>
+            <DropdownMenuTrigger
               style={{
-                flex: 1,
-                padding: "8px 0",
-                textAlign: "center",
-                textTransform: "uppercase",
-                background: o === sort ? "var(--line)" : "transparent",
-                color: o === sort ? "var(--paper)" : "var(--ink)",
-                border: "none",
-                borderLeft: i > 0 ? "1px solid var(--line-soft)" : undefined,
-                cursor: "pointer",
                 fontFamily: "var(--font-mono)",
                 fontSize: 10,
-                letterSpacing: "0.04em",
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
               }}
             >
-              {o}
-            </button>
-          ))}
+              {sort} ▾
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="!w-auto min-w-0 p-0.5 rounded-sm text-center" style={{ fontFamily: "var(--font-mono)", fontSize: 10 }}>
+              <DropdownMenuRadioGroup value={sort} onValueChange={(v) => v && setSort(v)}>
+                {SORT_OPTS.map((o) => (
+                  <DropdownMenuRadioItem key={o} value={o} className="py-0.5 px-2">{o}</DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* 리뷰 목록 */}
