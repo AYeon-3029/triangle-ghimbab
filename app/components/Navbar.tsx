@@ -55,7 +55,22 @@ export default function Navbar({ right }: { right?: ReactNode }) {
         </span>
       </Link>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <Link
+          href="https://forms.gle/placeholder"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontSize: 10,
+            textTransform: "uppercase",
+            letterSpacing: "0.03em",
+            color: "var(--mute)",
+            textDecoration: "none",
+          }}
+        >
+          피드백
+        </Link>
         {right ?? (
           <Link
             href="/products/_/review"

@@ -133,14 +133,14 @@ export default function ReviewWritePage() {
       >
         <button
           onClick={() => router.back()}
-          style={{ ...MONO, fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--mute)" }}
+          style={{ fontFamily: "var(--font-sans)", fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--mute)" }}
         >
           ✕ 취소
         </button>
         <span style={{ fontSize: 13, fontWeight: 600 }}>리뷰 작성</span>
         <button
           onClick={handleSubmit}
-          style={{ ...MONO, fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--accent))" }}
+          style={{ fontFamily: "var(--font-sans)", fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--accent)" }}
         >
           제출
         </button>
@@ -424,8 +424,8 @@ export default function ReviewWritePage() {
                 style={{
                   flex: 1,
                   padding: "10px 0",
-                  border: "1px solid var(--line)",
-                  background: isPurchase === val ? "var(--line)" : "var(--paper)",
+                  border: isPurchase === val ? "1px solid var(--accent)": "1px solid var(--line)",
+                  background: isPurchase === val ? "var(--accent)" : "var(--paper)",
                   color: isPurchase === val ? "var(--paper)" : "var(--ink)",
                   fontSize: 12,
                   cursor: "pointer",
@@ -453,11 +453,11 @@ export default function ReviewWritePage() {
           style={{
             width: "100%",
             padding: "12px 0",
-            background: submitting ? "var(--mute)" : "var(--line)",
-            color: "var(--paper)",
+            background: submitting ? "var(--fill-2)" : "var(--ink)",
+            color: submitting ? "var(--line-soft)" : "var(--paper)",
             border: "none",
             fontSize: 14,
-            fontWeight: 600,
+            fontWeight: 700,
             fontFamily: "var(--font-sans)",
             cursor: submitting ? "not-allowed" : "pointer",
           }}

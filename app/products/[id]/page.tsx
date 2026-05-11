@@ -134,7 +134,7 @@ export default function ProductPage() {
       </div>
 
       <main style={{ flex: 1, paddingBottom: 80 }}>
-        {/* 히어로 */}
+        {/* 제품 */}
         <div
           style={{
             padding: "20px 16px 12px",
@@ -159,7 +159,7 @@ export default function ProductPage() {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={product.imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             ) : (
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 32, color: "var(--mute)" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 32, fontWeight: 700, color: "var(--mute)" }}>
                 {product.name[0]}
               </span>
             )}
@@ -169,11 +169,11 @@ export default function ProductPage() {
               marginTop: 12,
               display: "flex",
               justifyContent: "center",
-              alignItems: "flex-end",
+              alignItems: "center",
               gap: 8,
             }}
           >
-            <TierBadge tier={product.tier} />
+            <TierBadge tier={product.tier} size={44} />
             <span style={{ fontSize: 22, fontWeight: 600, letterSpacing: "-0.02em" }}>
               {product.name}
             </span>
@@ -282,9 +282,9 @@ export default function ProductPage() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
                 <Stars value={r.rating} size={11} />
-                <span style={{ fontSize: 11, fontWeight: 600 }}>{r.rating.toFixed(1)}</span>
+                <span style={{ fontSize: 11, fontWeight: 700 }}>{r.rating.toFixed(1)}</span>
                 {r.isPurchase && (
-                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-auto border-[var(--accent)] text-[var(--accent)] rounded-none">재구매</Badge>
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-auto border-[var(--accent)] text-[var(--accent)] rounded-none" style={{ fontFamily: "var(--font-sans)", paddingTop: 2, paddingBottom: 0 }}>재구매</Badge>
                 )}
               </div>
               {r.tags.length > 0 && (
@@ -303,7 +303,7 @@ export default function ProductPage() {
                 />
               )}
               {r.comment && (
-                <div style={{ fontSize: 12, marginTop: 6, lineHeight: 1.5 }}>{r.comment}</div>
+                <div style={{ fontSize: 12, fontWeight: 400, marginTop: 6, lineHeight: 1.5 }}>{r.comment}</div>
               )}
             </div>
           ))}

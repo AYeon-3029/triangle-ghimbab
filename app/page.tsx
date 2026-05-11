@@ -9,13 +9,8 @@ import { TAG_LABEL, type Tag, type Product } from "./lib/data";
 import { fetchProducts } from "./lib/supabase";
 
 const FILTER_TAGS: Array<{ value: Tag | "전체"; label: string }> = [
-  { value: "전체",      label: "전체" },
-  { value: "Spicy",     label: TAG_LABEL.Spicy },
-  { value: "Heavy",     label: TAG_LABEL.Heavy },
-  { value: "Chewy",     label: TAG_LABEL.Chewy },
-  { value: "Mild",      label: TAG_LABEL.Mild },
-  { value: "Salty",     label: TAG_LABEL.Salty },
-  { value: "Sweety",    label: TAG_LABEL.Sweety },
+  { value: "전체", label: "전체" },
+  ...(Object.entries(TAG_LABEL) as [Tag, string][]).map(([value, label]) => ({ value, label })),
 ];
 
 const LABEL: React.CSSProperties = {
@@ -68,7 +63,7 @@ export default function HomePage() {
             margin: "4px 0 8px",
           }}
         >
-          <span style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.015em" }}>
+          <span style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.015em" }}>
             삼각김밥 티어리스트
           </span>
         </div>

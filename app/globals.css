@@ -5,6 +5,20 @@
 @custom-variant dark (&:is(.dark *));
 
 @font-face {
+    font-family: 'LaundryGothic';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2403-2@1.0/TTLaundryGothicR.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LaundryGothic';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2403-2@1.0/TTLaundryGothicB.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
   font-family: 'KotraGothic';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10-21@1.0/KOTRA_GOTHIC.woff') format('woff');
   font-weight: normal;
@@ -12,31 +26,28 @@
 }
 
 @font-face {
-  font-family: 'Oagothic';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/OAGothic-Medium.woff2') format('woff2');
-  font-weight: 500;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Oagothic';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/OAGothic-ExtraBold.woff2') format('woff2');
-  font-weight: 800;
-  font-display: swap;
+    font-family: 'MoveSans';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/MoveSans-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
 }
 
 :root {
-  --font-sans: 'Oagothic', system-ui, sans-serif;
+  --font-sans: 'LaundryGothic', system-ui, sans-serif;
   --font-mono: 'KotraGothic', ui-monospace, monospace;
+  --font-accent: 'MoveSans', system-ui, sans-serif;
   --bg: #fafaf8;
-  --paper: #ffffff;
+  --paper: #fafaf8;
   --ink: #1a1a1a;
   --line: #1a1a1a;
   --line-soft: #c8c5bf;
   --mute: #8a857d;
   --fill: #ececea;
   --fill-2: #f3f2ee;
-  --accent: #ff5b1f;
+  --accent: #ff8243;
+  --accent-2: #fce883;
+  --accent-3: #a8d672;
+  --accent-4: #b0b0b0;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
