@@ -244,9 +244,10 @@ export default function ReviewWritePage() {
               <span style={{ ...LABEL, fontSize: 11 }}>/ 5.0</span>
             </div>
           </div>
+          <div style={{ display: "flex", justifyContent: "center", margin: "12px 0 4px" }}>
           <div
             ref={starsRef}
-            style={{ display: "flex", gap: 2, margin: "12px 0 4px", justifyContent: "center", touchAction: "none" }}
+            style={{ display: "flex", gap: 2, touchAction: "none" }}
             onTouchStart={(e) => setHoverRating(ratingFromX(e.touches[0].clientX))}
             onTouchMove={(e) => setHoverRating(ratingFromX(e.touches[0].clientX))}
             onTouchEnd={() => { if (hoverRating > 0) setRating(hoverRating); setHoverRating(0); }}
@@ -281,6 +282,7 @@ export default function ReviewWritePage() {
                 </div>
               );
             })}
+          </div>
           </div>
         </div>
 

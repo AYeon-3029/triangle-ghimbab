@@ -43,8 +43,9 @@ export default function HomePage() {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Navbar />
-      <SearchBar />
-      <TagFilter
+      <div style={{ position: "sticky", top: 48, zIndex: 30, background: "var(--paper)" }}>
+        <SearchBar />
+        <TagFilter
         items={FILTER_TAGS.map((f) => f.label)}
         value={FILTER_TAGS.find((f) => f.value === activeFilter)?.label ?? "전체"}
         onChange={(label) => {
@@ -52,6 +53,7 @@ export default function HomePage() {
           setActiveFilter(found?.value ?? "전체");
         }}
       />
+      </div>
 
       <main style={{ flex: 1, padding: "0 16px 80px" }}>
         {/* 섹션 헤더 */}
