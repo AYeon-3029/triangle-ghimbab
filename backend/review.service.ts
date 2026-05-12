@@ -8,6 +8,8 @@ export type CreateReviewInput = {
   imageUrl?: string;
   tags?: Tag[];
   isPurchase?: boolean;
+  authorId?: string;
+  authorName?: string;
 };
 
 export type UpdateReviewInput = Partial<CreateReviewInput>;

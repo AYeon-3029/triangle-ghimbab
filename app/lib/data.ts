@@ -39,4 +39,28 @@ export type Product = {
   tier: Tier;
 };
 
+export type User = {
+  id: string;
+  email: string;
+  nickname: string;
+};
 
+export type CommunityPost = {
+  id: string;
+  title: string;
+  content: string;
+  authorName: string;
+  imageUrls: string[];
+  createdAt: string;
+  commentCount: number;
+  likeCount: number;
+  viewerHasLiked: boolean;
+  comments: CommunityComment[];
+};
+
+export type CommunityComment = {
+  id: string;
+  content: string;
+  authorName: string;
+  createdAt: string;
+};

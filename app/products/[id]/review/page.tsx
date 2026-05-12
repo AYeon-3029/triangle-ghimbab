@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Star, StarHalf } from "lucide-react";
-import { TAG_LABEL, type Tag, type Product } from "../../../lib/data";
-import { fetchProducts, insertReview, uploadReviewImage } from "../../../lib/supabase";
+import { TAG_LABEL, type Tag, type Product, type User } from "../../../lib/data";
+import { fetchMe, fetchProducts, insertReview, uploadReviewImage } from "../../../lib/supabase";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,17 +28,23 @@ const LABEL: React.CSSProperties = {
   color: "var(--mute)",
 };
 
+function Divider() {
+  return <hr style={{ border: "none", borderTop: "1px solid var(--line-soft)", margin: "16px 0" }} />;
+}
+
 export default function ReviewWritePage() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
   const isBlank = id === "_";
 
+  const [user, setUser] = useState<User | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedId, setSelectedId] = useState<string>(isBlank ? "" : id);
   const product = products.find((p) => p.id === selectedId);
 
   useEffect(() => {
+    fetchMe().then(setUser);
     fetchProducts().then((data) => {
       setProducts(data);
       if (!isBlank && data.length > 0 && !data.some((p) => p.id === id)) {
@@ -108,13 +114,9 @@ export default function ReviewWritePage() {
       toast.error("리뷰 제출에 실패했습니다. 다시 시도해주세요.");
       return;
     }
-    toast.success("리뷰가 등록됐습니다!");
+    toast.success(user ? `${user.nickname} 닉네임으로 리뷰를 등록했습니다.` : "익명 리뷰를 등록했습니다.");
     router.back();
   }
-
-  const Divider = () => (
-    <hr style={{ border: "none", borderTop: "1px solid var(--line-soft)", margin: "16px 0" }} />
-  );
 
   return (
     <div
@@ -453,6 +455,12 @@ export default function ReviewWritePage() {
               </button>
             ))}
           </div>
+        </div>
+
+        <Divider />
+
+        <div style={{ color: "var(--mute)", fontSize: 12, lineHeight: 1.5 }}>
+          {user ? `로그인 상태라 리뷰 작성자는 ${user.nickname}으로 표시됩니다.` : "로그인하지 않아도 리뷰 작성이 가능하며, 작성자는 익명으로 표시됩니다."}
         </div>
       </div>
 

@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function SearchBar({
@@ -11,10 +11,6 @@ export default function SearchBar({
   initialValue?: string;
 }) {
   const [query, setQuery] = useState(initialValue);
-
-  useEffect(() => {
-    setQuery(initialValue);
-  }, [initialValue]);
   const router = useRouter();
 
   function handleSubmit(e: React.FormEvent) {

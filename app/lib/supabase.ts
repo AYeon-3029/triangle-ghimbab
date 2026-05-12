@@ -2,10 +2,12 @@ import { createClient } from "@supabase/supabase-js";
 import type { Product, Tag } from "./data";
 
 // Supabase 클라이언트는 Storage(이미지 업로드) 전용
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+function getSupabaseClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) return null;
+  return createClient(url, anonKey);
+}
 
 export type ReviewRow = {
   id: string;
@@ -15,6 +17,7 @@ export type ReviewRow = {
   imageUrl: string | null;
   createdAt: string;
   isPurchase: boolean;
+  authorName: string;
 };
 
 export async function fetchProducts(): Promise<Product[]> {
@@ -36,6 +39,8 @@ export async function fetchReviews(productId: string): Promise<ReviewRow[]> {
 }
 
 export async function uploadReviewImage(file: File): Promise<string | null> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return null;
   const ext = file.name.split(".").pop();
   const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
   const { error } = await supabase.storage.from("review-images").upload(path, file);
@@ -62,4 +67,15 @@ export async function insertReview(input: {
     return { ok: false, error: data.error };
   }
   return { ok: true };
+}
+
+export async function fetchMe() {
+  const res = await fetch("/api/auth/me");
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.user ?? null;
+}
+
+export async function logout() {
+  await fetch("/api/auth/logout", { method: "POST" });
 }

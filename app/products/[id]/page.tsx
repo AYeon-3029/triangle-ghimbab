@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import TierBadge from "../../components/TierBadge";
 import Stars from "../../components/Stars";
-import { TAG_LABEL, BRAND_LABEL, type Tag, type Product } from "../../lib/data";
+import { TAG_LABEL, type Tag, type Product } from "../../lib/data";
 import { fetchProduct, fetchReviews, type ReviewRow } from "../../lib/supabase";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -286,7 +286,7 @@ export default function ProductPage() {
               style={{ padding: "14px 0", borderBottom: "1px solid var(--line-soft)" }}
             >
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ ...MONO, fontSize: 10 }}>익명</span>
+                <span style={{ ...MONO, fontSize: 10 }}>{r.authorName || "익명"}</span>
                 <span style={LABEL}>{formatDate(r.createdAt)}</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
