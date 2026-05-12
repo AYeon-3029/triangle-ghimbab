@@ -3,6 +3,7 @@ import TierBadge from "./TierBadge";
 import Stars from "./Stars";
 import type { Product } from "../lib/data";
 import { TAG_LABEL } from "../lib/data";
+import { Badge } from "@/components/ui/badge";
 
 export type { Product } from "../lib/data";
 
@@ -67,16 +68,22 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
             )}
           </div>
           <div style={{ minWidth: 0 }}>
-            <div
-              style={{
-                fontSize: 12,
-                fontWeight: 500,
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {product.name}
+            <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <div
+                style={{
+                  fontSize: 12,
+                  fontWeight: 500,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  minWidth: 0,
+                }}
+              >
+                {product.name}
+              </div>
+              {product.isNew && (
+                <Badge variant="outline" className="text-[7px] px-1 py-0 h-3 border-[var(--accent)] text-[var(--accent)] rounded-none flex-shrink-0" style={{ fontFamily: "var(--font-sans)", paddingTop: 2, paddingBottom: 0 }}>NEW</Badge>
+              )}
             </div>
             <div style={{ display: "flex", gap: 3, marginTop: 2, alignItems: "center" }}>
               <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--mute)" }}>

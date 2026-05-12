@@ -45,3 +45,5 @@ CLAUDE.md
 claude_design/
 .vercel
 .env*.local
+schema.prisma
+seed.ts
