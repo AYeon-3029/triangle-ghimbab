@@ -17,6 +17,12 @@ export const TAG_LABEL: Record<Tag, string> = {
 };
 
 export type Brand = "GS25" | "SEVEN_ELEVEN" | "EMART24" | "CU";
+export const BRAND_LABEL: Record<Brand, string> = {
+  GS25:         "GS25",
+  SEVEN_ELEVEN: "세븐일레븐",
+  EMART24:      "이마트24",
+  CU:           "CU",
+};
 export type Tier  = "S" | "A" | "B" | "C" | "Unknown";
 
 export type Product = {

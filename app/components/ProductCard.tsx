@@ -2,7 +2,7 @@ import Link from "next/link";
 import TierBadge from "./TierBadge";
 import Stars from "./Stars";
 import type { Product } from "../lib/data";
-import { TAG_LABEL } from "../lib/data";
+import { TAG_LABEL, BRAND_LABEL } from "../lib/data";
 import { Badge } from "@/components/ui/badge";
 
 export type { Product } from "../lib/data";
@@ -22,7 +22,7 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "20px 28px 1fr 70px 56px",
+          gridTemplateColumns: "20px 28px 1fr 50px 56px",
           gap: 8,
           alignItems: "center",
           padding: "8px 0",
@@ -86,6 +86,10 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
               )}
             </div>
             <div style={{ display: "flex", gap: 3, marginTop: 2, alignItems: "center" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--mute)" }}>
+                {BRAND_LABEL[product.brand]}
+              </span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--line-soft)" }}>·</span>
               <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--mute)" }}>
                 {product.price.toLocaleString()}원
               </span>

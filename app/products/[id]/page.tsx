@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import TierBadge from "../../components/TierBadge";
 import Stars from "../../components/Stars";
-import { TAG_LABEL, type Tag, type Product } from "../../lib/data";
+import { TAG_LABEL, BRAND_LABEL, type Tag, type Product } from "../../lib/data";
 import { fetchProduct, fetchReviews, type ReviewRow } from "../../lib/supabase";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -142,6 +142,12 @@ export default function ProductPage() {
             textAlign: "center",
           }}
         >
+          {product.brand === "GS25" && (
+            <div style={{ marginBottom: 12, display: "flex", justifyContent: "center" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/GS25.svg" alt="GS25" style={{ height: 20 }} />
+            </div>
+          )}
           <div
             style={{
               width: 160,
@@ -166,7 +172,7 @@ export default function ProductPage() {
           </div>
           <div
             style={{
-              marginTop: 12,
+              marginTop: 3,
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
