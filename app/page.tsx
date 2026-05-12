@@ -74,7 +74,7 @@ export default function HomePage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "20px 28px 1fr 50px 56px",
+            gridTemplateColumns: "20px 28px 1fr 50px 40px",
             gap: 8,
             padding: "6px 0",
             borderTop: "1px solid var(--line)",
