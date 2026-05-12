@@ -1,17 +1,12 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import Navbar from "./components/Navbar";
-import SearchBar from "./components/SearchBar";
-import TagFilter from "./components/TagFilter";
-import ProductCard from "./components/ProductCard";
-import { TAG_LABEL, type Tag, type Product } from "./lib/data";
-import { fetchProducts } from "./lib/supabase";
-
-const FILTER_TAGS: Array<{ value: Tag | "전체"; label: string }> = [
-  { value: "전체", label: "전체" },
-  ...(Object.entries(TAG_LABEL) as [Tag, string][]).map(([value, label]) => ({ value, label })),
-];
+import Navbar from "../components/Navbar";
+import SearchBar from "../components/SearchBar";
+import ProductCard from "../components/ProductCard";
+import { fetchProducts } from "../lib/supabase";
+import type { Product } from "../lib/data";
 
 const LABEL: React.CSSProperties = {
   fontFamily: "var(--font-mono)",
@@ -21,8 +16,10 @@ const LABEL: React.CSSProperties = {
   color: "var(--mute)",
 };
 
-export default function HomePage() {
-  const [activeFilter, setActiveFilter] = useState<Tag | "전체">("전체");
+export default function SearchPage() {
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q") ?? "";
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,28 +30,16 @@ export default function HomePage() {
     });
   }, []);
 
-  const filtered = products.filter((p) => {
-    if (activeFilter === "전체") return true;
-    return p.tags.includes(activeFilter as Tag);
-  });
-  const sorted = [...filtered].sort((a, b) => b.avgRating - a.avgRating);
-  const maxReviews = products.length > 0 ? Math.max(...products.map((p) => p.reviewCount)) : 1;
+  const results = products.filter((p) =>
+    p.name.toLowerCase().includes(q.toLowerCase())
+  );
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Navbar />
-      <SearchBar />
-      <TagFilter
-        items={FILTER_TAGS.map((f) => f.label)}
-        value={FILTER_TAGS.find((f) => f.value === activeFilter)?.label ?? "전체"}
-        onChange={(label) => {
-          const found = FILTER_TAGS.find((f) => f.label === label);
-          setActiveFilter(found?.value ?? "전체");
-        }}
-      />
+      <SearchBar initialValue={q} />
 
       <main style={{ flex: 1, padding: "0 16px 80px" }}>
-        {/* 섹션 헤더 */}
         <div
           style={{
             display: "flex",
@@ -63,12 +48,14 @@ export default function HomePage() {
             margin: "4px 0 8px",
           }}
         >
-          <span style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.015em" }}>
-            삼각김밥 티어리스트
+          <span style={{ fontSize: 16, fontWeight: 600, letterSpacing: "-0.015em" }}>
+            &ldquo;{q}&rdquo; 검색 결과
           </span>
+          {!loading && (
+            <span style={{ ...LABEL }}>{results.length}건</span>
+          )}
         </div>
 
-        {/* 테이블 헤더 */}
         <div
           style={{
             display: "grid",
@@ -86,22 +73,21 @@ export default function HomePage() {
           <span style={{ ...LABEL, textAlign: "right" }}>평점</span>
         </div>
 
-        {/* 랭킹 행 */}
         {loading ? (
           <div style={{ padding: "32px 0", textAlign: "center", color: "var(--mute)", fontFamily: "var(--font-mono)", fontSize: 11 }}>
             로딩 중...
           </div>
-        ) : sorted.length === 0 ? (
+        ) : results.length === 0 ? (
           <div style={{ padding: "32px 0", textAlign: "center", color: "var(--mute)", fontFamily: "var(--font-mono)", fontSize: 11 }}>
-            제품이 없습니다.
+            검색 결과가 없습니다.
           </div>
         ) : (
-          sorted.map((product, i) => (
+          results.map((product, i) => (
             <ProductCard
               key={product.id}
               product={product}
               rank={i + 1}
-              maxReviews={maxReviews}
+              maxReviews={Math.max(...results.map((p) => p.reviewCount))}
             />
           ))
         )}

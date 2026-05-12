@@ -7,6 +7,14 @@ import TierBadge from "../../components/TierBadge";
 import Stars from "../../components/Stars";
 import { TAG_LABEL, type Tag, type Product } from "../../lib/data";
 import { fetchProduct, fetchReviews, type ReviewRow } from "../../lib/supabase";
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 function formatDate(iso: string): string {
   const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
@@ -14,6 +22,12 @@ function formatDate(iso: string): string {
   if (d < 7) return `${d}일 전`;
   if (d < 30) return `${Math.floor(d / 7)}주 전`;
   return `${Math.floor(d / 30)}달 전`;
+}
+
+function computeRepurchasePct(reviews: ReviewRow[]): number | null {
+  if (reviews.length === 0) return null;
+  const count = reviews.filter((r) => r.isPurchase).length;
+  return Math.round((count / reviews.length) * 100);
 }
 
 function computeTagAggregate(reviews: ReviewRow[]): { tag: Tag; pct: number }[] {
@@ -84,6 +98,7 @@ export default function ProductPage() {
   }
 
   const tagAggregate = computeTagAggregate(reviews);
+  const repurchasePct = computeRepurchasePct(reviews);
   const sorted = sortReviews(reviews, sort);
 
   return (
@@ -119,12 +134,12 @@ export default function ProductPage() {
       </div>
 
       <main style={{ flex: 1, paddingBottom: 80 }}>
-        {/* 히어로 */}
+        {/* 제품 */}
         <div
           style={{
             padding: "20px 16px 12px",
+            border: "1px solid var(--line-soft)",
             textAlign: "center",
-            borderBottom: "1px solid var(--line-soft)",
           }}
         >
           <div
@@ -144,7 +159,7 @@ export default function ProductPage() {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={product.imageUrl} alt={product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             ) : (
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 32, color: "var(--mute)" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 32, fontWeight: 700, color: "var(--mute)" }}>
                 {product.name[0]}
               </span>
             )}
@@ -158,10 +173,11 @@ export default function ProductPage() {
               gap: 8,
             }}
           >
-            <TierBadge tier={product.tier} />
+            <TierBadge tier={product.tier} size={44} />
             <span style={{ fontSize: 22, fontWeight: 600, letterSpacing: "-0.02em" }}>
               {product.name}
             </span>
+            <span style={{ ...LABEL, fontSize: 11 }}>{product.price.toLocaleString()}원</span>
           </div>
           <div
             style={{
@@ -175,12 +191,14 @@ export default function ProductPage() {
             <Stars value={product.avgRating} size={14} />
             <span style={{ fontSize: 14, fontWeight: 600 }}>{product.avgRating.toFixed(1)}</span>
             <span style={{ ...LABEL, fontSize: 11 }}>· 리뷰 {product.reviewCount.toLocaleString()}</span>
-            <span style={{ ...LABEL, fontSize: 11 }}>· {product.price.toLocaleString()}원</span>
+            {repurchasePct !== null && (
+              <span style={{ ...LABEL, fontSize: 11 }}>· 재구매 {repurchasePct}%</span>
+            )}
           </div>
         </div>
 
         {/* 키워드 집계 */}
-        <div style={{ padding: "12px 16px" }}>
+        <div style={{ padding: "12px 16px"}}>
           <div style={LABEL}>이 제품의 키워드</div>
           <div style={{ display: "grid", gap: 5, marginTop: 8 }}>
             {tagAggregate.map((t) => (
@@ -216,32 +234,39 @@ export default function ProductPage() {
         <div
           style={{
             display: "flex",
-            borderTop: "1px solid var(--line)",
-            borderBottom: "1px solid var(--line)",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "6px 16px",
+            borderTop: "1px solid var(--mute)",
+            borderBottom: "1px solid var(--mute)",
           }}
         >
-          {SORT_OPTS.map((o, i) => (
-            <button
-              key={o}
-              onClick={() => setSort(o)}
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 10}}>
+            리뷰 {reviews.length}건
+          </span>
+          <DropdownMenu>
+            <DropdownMenuTrigger
               style={{
-                flex: 1,
-                padding: "8px 0",
-                textAlign: "center",
-                textTransform: "uppercase",
-                background: o === sort ? "var(--line)" : "transparent",
-                color: o === sort ? "var(--paper)" : "var(--ink)",
-                border: "none",
-                borderLeft: i > 0 ? "1px solid var(--line-soft)" : undefined,
-                cursor: "pointer",
                 fontFamily: "var(--font-mono)",
                 fontSize: 10,
-                letterSpacing: "0.04em",
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
               }}
             >
-              {o}
-            </button>
-          ))}
+              {sort} ▾
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="!w-auto min-w-0 p-0.5 rounded-sm text-center" style={{ fontFamily: "var(--font-mono)", fontSize: 10 }}>
+              <DropdownMenuRadioGroup value={sort} onValueChange={(v) => v && setSort(v)}>
+                {SORT_OPTS.map((o) => (
+                  <DropdownMenuRadioItem key={o} value={o} className="py-0.5 px-2">{o}</DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* 리뷰 목록 */}
@@ -257,7 +282,10 @@ export default function ProductPage() {
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
                 <Stars value={r.rating} size={11} />
-                <span style={{ fontSize: 11, fontWeight: 600 }}>{r.rating.toFixed(1)}</span>
+                <span style={{ fontSize: 11, fontWeight: 700 }}>{r.rating.toFixed(1)}</span>
+                {r.isPurchase && (
+                  <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-auto border-[var(--accent)] text-[var(--accent)] rounded-none" style={{ fontFamily: "var(--font-sans)", paddingTop: 2, paddingBottom: 0 }}>재구매</Badge>
+                )}
               </div>
               {r.tags.length > 0 && (
                 <div style={{ display: "flex", gap: 4, marginTop: 6, flexWrap: "wrap" }}>
@@ -275,7 +303,7 @@ export default function ProductPage() {
                 />
               )}
               {r.comment && (
-                <div style={{ fontSize: 12, marginTop: 6, lineHeight: 1.5 }}>{r.comment}</div>
+                <div style={{ fontSize: 12, fontWeight: 400, marginTop: 6, lineHeight: 1.5 }}>{r.comment}</div>
               )}
             </div>
           ))}

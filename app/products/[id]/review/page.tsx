@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "sonner";
 
 const TAG_GROUPS: { group: string; items: Tag[] }[] = [
   { group: "맛",   items: ["Spicy", "Salty", "Sweety", "Mild", "Normal", "Fishy"] },
@@ -73,11 +74,11 @@ export default function ReviewWritePage() {
 
   async function handleSubmit() {
     if (!selectedId) {
-      alert("제품을 선택해주세요.");
+      toast.error("제품을 선택해주세요.");
       return;
     }
     if (rating === 0) {
-      alert("별점을 선택해주세요.");
+      toast.error("별점을 선택해주세요.");
       return;
     }
     setSubmitting(true);
@@ -95,9 +96,10 @@ export default function ReviewWritePage() {
     });
     setSubmitting(false);
     if (!result.ok) {
-      alert("리뷰 제출에 실패했습니다. 다시 시도해주세요.");
+      toast.error("리뷰 제출에 실패했습니다. 다시 시도해주세요.");
       return;
     }
+    toast.success("리뷰가 등록됐습니다!");
     router.back();
   }
 
@@ -131,14 +133,14 @@ export default function ReviewWritePage() {
       >
         <button
           onClick={() => router.back()}
-          style={{ ...MONO, fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--mute)" }}
+          style={{ fontFamily: "var(--font-sans)", fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--mute)" }}
         >
           ✕ 취소
         </button>
         <span style={{ fontSize: 13, fontWeight: 600 }}>리뷰 작성</span>
         <button
           onClick={handleSubmit}
-          style={{ ...MONO, fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--accent))" }}
+          style={{ fontFamily: "var(--font-sans)", fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--accent)" }}
         >
           제출
         </button>
@@ -422,8 +424,8 @@ export default function ReviewWritePage() {
                 style={{
                   flex: 1,
                   padding: "10px 0",
-                  border: "1px solid var(--line)",
-                  background: isPurchase === val ? "var(--line)" : "var(--paper)",
+                  border: isPurchase === val ? "1px solid var(--accent)": "1px solid var(--line)",
+                  background: isPurchase === val ? "var(--accent)" : "var(--paper)",
                   color: isPurchase === val ? "var(--paper)" : "var(--ink)",
                   fontSize: 12,
                   cursor: "pointer",
@@ -451,11 +453,11 @@ export default function ReviewWritePage() {
           style={{
             width: "100%",
             padding: "12px 0",
-            background: submitting ? "var(--mute)" : "var(--line)",
-            color: "var(--paper)",
+            background: submitting ? "var(--fill-2)" : "var(--ink)",
+            color: submitting ? "var(--line-soft)" : "var(--paper)",
             border: "none",
             fontSize: 14,
-            fontWeight: 600,
+            fontWeight: 700,
             fontFamily: "var(--font-sans)",
             cursor: submitting ? "not-allowed" : "pointer",
           }}
