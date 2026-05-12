@@ -36,7 +36,7 @@ export default function Navbar({ right }: { right?: ReactNode }) {
 
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <Link
-          href="https://forms.gle/placeholder"
+          href="https://docs.google.com/forms/d/e/1FAIpQLSfVXJyGy1t7MJv4pgHsI4Iv__ICUiiRz9mtCYThLwlC2LDXPQ/viewform?usp=header"
           target="_blank"
           rel="noopener noreferrer"
           style={{
