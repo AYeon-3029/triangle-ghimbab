@@ -19,7 +19,7 @@ function formatDate(iso: string): string {
 
 function computeRepurchasePct(reviews: ReviewRow[]): number | null {
   if (reviews.length === 0) return null;
-  return Math.round((reviews.filter((r) => r.isPurchase).length / reviews.length) * 100);
+  return Math.round((reviews.filter((review) => review.isPurchase).length / reviews.length) * 100);
 }
 
 function computeTagAggregate(reviews: ReviewRow[]): { tag: Tag; pct: number }[] {
@@ -94,12 +94,17 @@ export default function ProductPage() {
               <span style={{ fontSize: 32, color: "var(--mute)" }}>{product.name[0]}</span>
             )}
           </div>
-          <div style={{ marginTop: 12, display: "flex", justifyContent: "center", alignItems: "center", gap: 8 }}>
+          <div style={{ marginTop: 12, display: "flex", justifyContent: "center", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
             <TierBadge tier={product.tier} size={44} />
             <h1 style={{ margin: 0, fontSize: 22 }}>{product.name}</h1>
             <span style={LABEL}>{product.price.toLocaleString()}원</span>
+            {product.isNew && (
+              <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-auto border-[var(--accent)] text-[var(--accent)] rounded-none" style={{ fontFamily: "var(--font-sans)", paddingTop: 2, paddingBottom: 0 }}>
+                NEW
+              </Badge>
+            )}
           </div>
-          <div style={{ marginTop: 6, display: "flex", justifyContent: "center", alignItems: "center", gap: 6 }}>
+          <div style={{ marginTop: 6, display: "flex", justifyContent: "center", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
             <Stars value={product.avgRating} size={14} />
             <strong>{product.avgRating.toFixed(1)}</strong>
             <span style={LABEL}>리뷰 {product.reviewCount.toLocaleString()}</span>
@@ -126,7 +131,7 @@ export default function ProductPage() {
 
         <section style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 16px", borderBottom: "1px solid var(--line)" }}>
           <span style={{ fontSize: 12 }}>리뷰 {reviews.length}건</span>
-          <select value={sort} onChange={(e) => setSort(e.target.value)} style={{ border: "1px solid var(--line-soft)", background: "var(--paper)", padding: "4px 8px", fontSize: 12 }}>
+          <select value={sort} onChange={(event) => setSort(event.target.value)} style={{ border: "1px solid var(--line-soft)", background: "var(--paper)", padding: "4px 8px", fontSize: 12 }}>
             <option value="latest">최신순</option>
             <option value="high">별점 높은순</option>
             <option value="low">별점 낮은순</option>

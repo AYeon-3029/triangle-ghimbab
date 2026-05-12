@@ -25,6 +25,7 @@ export default function ReviewWritePage() {
   const id = params.id as string;
   const isBlank = id === "_";
   const fileRef = useRef<HTMLInputElement>(null);
+  const starsRef = useRef<HTMLDivElement>(null);
 
   const [user, setUser] = useState<User | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -37,16 +38,24 @@ export default function ReviewWritePage() {
   const [photos, setPhotos] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
-  const product = products.find((p) => p.id === selectedId);
+  const product = products.find((item) => item.id === selectedId);
   const displayRating = hoverRating || rating;
 
   useEffect(() => {
     fetchMe().then(setUser);
     fetchProducts().then((data) => {
       setProducts(data);
-      if (!isBlank && data.length > 0 && !data.some((p) => p.id === id)) setSelectedId(data[0].id);
+      if (!isBlank && data.length > 0 && !data.some((item) => item.id === id)) setSelectedId(data[0].id);
     });
   }, [id, isBlank]);
+
+  function ratingFromX(clientX: number): number {
+    const el = starsRef.current;
+    if (!el) return 0;
+    const { left, width } = el.getBoundingClientRect();
+    const x = Math.max(0, Math.min(clientX - left, width));
+    return Math.max(0.5, Math.min(5, Math.round((x / width) * 10) / 2));
+  }
 
   function toggleTag(tag: Tag) {
     setSelectedTags((prev) => {
@@ -85,6 +94,10 @@ export default function ReviewWritePage() {
     router.push(`/products/${selectedId}`);
   }
 
+  if (!isBlank && !product && products.length > 0) {
+    return <div style={{ padding: 32 }}>상품을 찾을 수 없습니다.</div>;
+  }
+
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--bg)" }}>
       <header style={{ position: "sticky", top: 0, zIndex: 40, background: "var(--paper)", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", height: 48 }}>
@@ -98,7 +111,7 @@ export default function ReviewWritePage() {
       <main style={{ flex: 1, padding: "14px 16px 24px", display: "grid", gap: 18 }}>
         <section>
           <label style={LABEL}>상품 선택</label>
-          <select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} style={{ marginTop: 6, width: "100%", border: "1px solid var(--line-soft)", background: "var(--paper)", padding: 10, fontSize: 13 }}>
+          <select value={selectedId} onChange={(event) => setSelectedId(event.target.value)} style={{ marginTop: 6, width: "100%", border: "1px solid var(--line-soft)", background: "var(--paper)", padding: 10, fontSize: 13 }}>
             <option value="">상품을 선택해주세요</option>
             {products.map((item) => <option key={item.id} value={item.id}>{item.name} · {item.price.toLocaleString()}원</option>)}
           </select>
@@ -110,25 +123,36 @@ export default function ReviewWritePage() {
             <span style={LABEL}>별점 *</span>
             <strong style={{ fontSize: 24 }}>{displayRating > 0 ? displayRating.toFixed(1) : "0.0"}</strong>
           </div>
-          <div style={{ display: "flex", gap: 2, marginTop: 10, justifyContent: "center" }}>
-            {[1, 2, 3, 4, 5].map((star) => {
-              const isFull = displayRating >= star;
-              const isHalf = !isFull && displayRating >= star - 0.5;
-              return (
-                <div key={star} style={{ position: "relative", width: 40, height: 40 }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", pointerEvents: "none" }}>
-                    {isFull ? <Star size={32} fill="var(--accent)" stroke="none" /> : isHalf ? (
-                      <div style={{ position: "relative", width: 32, height: 32 }}>
-                        <Star size={32} fill="var(--line-soft)" stroke="none" style={{ position: "absolute", top: 0, left: 0 }} />
-                        <StarHalf size={32} fill="var(--accent)" stroke="none" style={{ position: "absolute", top: 0, left: 0 }} />
-                      </div>
-                    ) : <Star size={32} fill="var(--line-soft)" stroke="none" />}
+          <div style={{ display: "flex", justifyContent: "center", margin: "12px 0 4px" }}>
+            <div
+              ref={starsRef}
+              style={{ display: "flex", gap: 2, touchAction: "none" }}
+              onTouchStart={(event) => setHoverRating(ratingFromX(event.touches[0].clientX))}
+              onTouchMove={(event) => setHoverRating(ratingFromX(event.touches[0].clientX))}
+              onTouchEnd={() => {
+                if (hoverRating > 0) setRating(hoverRating);
+                setHoverRating(0);
+              }}
+            >
+              {[1, 2, 3, 4, 5].map((star) => {
+                const isFull = displayRating >= star;
+                const isHalf = !isFull && displayRating >= star - 0.5;
+                return (
+                  <div key={star} style={{ position: "relative", width: 40, height: 40 }}>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%", pointerEvents: "none" }}>
+                      {isFull ? <Star size={32} fill="var(--accent)" stroke="none" /> : isHalf ? (
+                        <div style={{ position: "relative", width: 32, height: 32 }}>
+                          <Star size={32} fill="var(--line-soft)" stroke="none" style={{ position: "absolute", top: 0, left: 0 }} />
+                          <StarHalf size={32} fill="var(--accent)" stroke="none" style={{ position: "absolute", top: 0, left: 0 }} />
+                        </div>
+                      ) : <Star size={32} fill="var(--line-soft)" stroke="none" />}
+                    </div>
+                    <button onMouseEnter={() => setHoverRating(star - 0.5)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(star - 0.5)} style={{ position: "absolute", left: 0, top: 0, width: "50%", height: "100%", opacity: 0, cursor: "pointer", border: 0 }} />
+                    <button onMouseEnter={() => setHoverRating(star)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(star)} style={{ position: "absolute", right: 0, top: 0, width: "50%", height: "100%", opacity: 0, cursor: "pointer", border: 0 }} />
                   </div>
-                  <button onMouseEnter={() => setHoverRating(star - 0.5)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(star - 0.5)} style={{ position: "absolute", left: 0, top: 0, width: "50%", height: "100%", opacity: 0, cursor: "pointer", border: 0 }} />
-                  <button onMouseEnter={() => setHoverRating(star)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(star)} style={{ position: "absolute", right: 0, top: 0, width: "50%", height: "100%", opacity: 0, cursor: "pointer", border: 0 }} />
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </section>
 
@@ -143,10 +167,10 @@ export default function ReviewWritePage() {
           ) : (
             <button onClick={() => fileRef.current?.click()} style={{ marginTop: 8, width: 88, height: 80, border: "1px dashed var(--line-soft)", background: "transparent", cursor: "pointer" }}>사진 추가</button>
           )}
-          <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={(e) => {
-            const file = e.target.files?.[0];
+          <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={(event) => {
+            const file = event.target.files?.[0];
             if (file) setPhotos([file]);
-            e.target.value = "";
+            event.target.value = "";
           }} />
         </section>
 
@@ -176,7 +200,7 @@ export default function ReviewWritePage() {
 
         <section>
           <div style={LABEL}>한줄평, 선택</div>
-          <textarea value={body} onChange={(e) => setBody(e.target.value.slice(0, 200))} placeholder="맛, 양, 조합을 자유롭게 남겨주세요." style={{ marginTop: 6, width: "100%", border: "1px solid var(--line-soft)", padding: 10, minHeight: 80, background: "var(--paper)", resize: "vertical", outline: "none" }} />
+          <textarea value={body} onChange={(event) => setBody(event.target.value.slice(0, 200))} placeholder="맛, 양, 조합을 자유롭게 남겨주세요." style={{ marginTop: 6, width: "100%", border: "1px solid var(--line-soft)", padding: 10, minHeight: 80, background: "var(--paper)", resize: "vertical", outline: "none" }} />
           <div style={{ textAlign: "right", ...LABEL }}>{body.length}/200</div>
         </section>
 

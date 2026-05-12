@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
@@ -16,7 +18,7 @@ const LABEL: React.CSSProperties = {
   color: "var(--mute)",
 };
 
-function SearchPageContent() {
+function SearchResults() {
   const searchParams = useSearchParams();
   const q = searchParams.get("q") ?? "";
   const [products, setProducts] = useState<Product[]>([]);
@@ -35,8 +37,7 @@ function SearchPageContent() {
   const maxReviews = results.length > 0 ? Math.max(...results.map((product) => product.reviewCount)) : 1;
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Navbar />
+    <>
       <SearchBar initialValue={q} />
 
       <main style={{ flex: 1, padding: "0 16px 80px" }}>
@@ -63,14 +64,17 @@ function SearchPageContent() {
           ))
         )}
       </main>
-    </div>
+    </>
   );
 }
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div style={{ padding: 32, color: "var(--mute)" }}>검색 준비 중...</div>}>
-      <SearchPageContent />
-    </Suspense>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <Navbar />
+      <Suspense fallback={<div style={{ padding: 32, color: "var(--mute)" }}>검색 준비 중...</div>}>
+        <SearchResults />
+      </Suspense>
+    </div>
   );
 }

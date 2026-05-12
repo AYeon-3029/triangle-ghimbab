@@ -42,13 +42,13 @@ export async function createUser(input: { email: string; nickname: string; passw
   if (input.password.length < 6) throw new Error("비밀번호는 6자 이상이어야 합니다.");
 
   return prisma.user.create({
-    data: { email, nickname, passwordHash: hashPassword(input.password) },
+    data: { email, nickname, password: hashPassword(input.password) },
   });
 }
 
 export async function loginUser(email: string, password: string) {
   const user = await prisma.user.findUnique({ where: { email: email.trim().toLowerCase() } });
-  if (!user || !verifyPassword(password, user.passwordHash)) {
+  if (!user || !verifyPassword(password, user.password)) {
     throw new Error("이메일 또는 비밀번호가 올바르지 않습니다.");
   }
   await setSession(user.id);
