@@ -48,7 +48,7 @@ export default function LoginPage() {
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
       <main style={{ maxWidth: 420, margin: "0 auto", padding: "36px 16px" }}>
-        <h1 style={{ fontSize: 24, margin: "0 0 20px" }}>{mode === "login" ? "로그인" : "회원가입"}</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, margin: "0 0 20px" }}>{mode === "login" ? "로그인" : "회원가입"}</h1>
 
         <form onSubmit={handleSubmit} style={{ display: "grid", gap: 10 }}>
           <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="이메일" style={inputStyle} required />
