@@ -8,14 +8,16 @@ import type { User } from "../lib/data";
 
 export default function Navbar({ right }: { right?: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     fetchMe().then(setUser);
   }, []);
 
   async function handleLogout() {
+    setLoggingOut(true);
     await logout();
-    setUser(null);
+    window.location.reload();
   }
 
   const navLink: React.CSSProperties = {
@@ -51,8 +53,12 @@ export default function Navbar({ right }: { right?: ReactNode }) {
         {user ? (
           <>
             <span style={{ ...navLink, color: "var(--ink)" }}>{user.nickname}</span>
-            <button onClick={handleLogout} style={{ ...navLink, border: 0, background: "transparent", cursor: "pointer", padding: 0 }}>
-              로그아웃
+            <button
+              onClick={handleLogout}
+              disabled={loggingOut}
+              style={{ ...navLink, border: 0, background: "transparent", cursor: loggingOut ? "not-allowed" : "pointer", padding: 0 }}
+            >
+              {loggingOut ? "로그아웃 중" : "로그아웃"}
             </button>
           </>
         ) : (
