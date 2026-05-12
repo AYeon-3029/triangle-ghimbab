@@ -65,6 +65,7 @@ model User {
   reviews   Review[]
   posts     Post[]
   comments  Comment[]
+  postLikes PostLike[]
 
   @@map("users")
 }
@@ -95,6 +96,7 @@ model Post {
   authorId  String
   author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments  Comment[]
+  likes     PostLike[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -112,4 +114,16 @@ model Comment {
   updatedAt DateTime @updatedAt
 
   @@map("comments")
+}
+
+model PostLike {
+  id        String   @id @default(cuid())
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([authorId, postId])
+  @@map("post_likes")
 }

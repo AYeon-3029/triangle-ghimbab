@@ -33,10 +33,12 @@ export default function LoginPage() {
     });
     const data = await res.json().catch(() => ({}));
     setSubmitting(false);
+
     if (!res.ok) {
       toast.error(data.error ?? "다시 시도해주세요.");
       return;
     }
+
     toast.success(mode === "login" ? "로그인했습니다." : "가입하고 로그인했습니다.");
     router.push("/community");
     router.refresh();
@@ -46,10 +48,7 @@ export default function LoginPage() {
     <div style={{ minHeight: "100vh", background: "var(--bg)" }}>
       <Navbar />
       <main style={{ maxWidth: 420, margin: "0 auto", padding: "36px 16px" }}>
-        <h1 style={{ fontSize: 24, margin: "0 0 8px" }}>{mode === "login" ? "로그인" : "회원가입"}</h1>
-        <p style={{ margin: "0 0 20px", color: "var(--mute)", lineHeight: 1.6 }}>
-          로그인하면 커뮤니티에 글을 쓰고, 리뷰 작성 시 닉네임이 표시됩니다. 로그인하지 않아도 리뷰는 익명으로 남길 수 있어요.
-        </p>
+        <h1 style={{ fontSize: 24, margin: "0 0 20px" }}>{mode === "login" ? "로그인" : "회원가입"}</h1>
 
         <form onSubmit={handleSubmit} style={{ display: "grid", gap: 10 }}>
           <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="이메일" style={inputStyle} required />

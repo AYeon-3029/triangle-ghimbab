@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/backend/auth";
 
 type CommunityPostWithAuthor = Awaited<ReturnType<typeof getCommunityPosts>>[number];
 
-function serializePost(post: CommunityPostWithAuthor) {
+export function serializePost(post: CommunityPostWithAuthor) {
   return {
     id: post.id,
     title: post.title,
@@ -12,11 +12,22 @@ function serializePost(post: CommunityPostWithAuthor) {
     authorName: post.author.nickname,
     imageUrls: post.imageUrls,
     createdAt: post.createdAt.toISOString(),
+    commentCount: post._count.comments,
+    likeCount: post._count.likes,
+    viewerHasLiked: post.likes.length > 0,
+    comments: post.comments.map((comment) => ({
+      id: comment.id,
+      content: comment.content,
+      authorName: comment.author.nickname,
+      createdAt: comment.createdAt.toISOString(),
+    })),
   };
 }
 
-export async function GET() {
-  const posts = await getCommunityPosts();
+export async function GET(req: NextRequest) {
+  const user = await getCurrentUser();
+  const query = req.nextUrl.searchParams.get("q") ?? "";
+  const posts = await getCommunityPosts(query, user?.id);
   return NextResponse.json(posts.map(serializePost));
 }
 
@@ -34,6 +45,7 @@ export async function POST(req: NextRequest) {
         .filter((url): url is string => typeof url === "string" && url.trim().length > 0)
         .slice(0, 3)
     : [];
+
   if (safeTitle.length < 2 || safeContent.length < 5) {
     return NextResponse.json({ error: "제목과 내용을 조금 더 작성해주세요." }, { status: 400 });
   }
@@ -44,12 +56,6 @@ export async function POST(req: NextRequest) {
     authorId: user.id,
     imageUrls: safeImageUrls,
   });
-  return NextResponse.json({
-    id: post.id,
-    title: post.title,
-    content: post.content,
-    authorName: post.author.nickname,
-    imageUrls: post.imageUrls,
-    createdAt: post.createdAt.toISOString(),
-  }, { status: 201 });
+
+  return NextResponse.json(serializePost(post), { status: 201 });
 }

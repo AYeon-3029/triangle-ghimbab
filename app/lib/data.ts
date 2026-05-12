@@ -55,4 +55,15 @@ export type CommunityPost = {
   authorName: string;
   imageUrls: string[];
   createdAt: string;
+  commentCount: number;
+  likeCount: number;
+  viewerHasLiked: boolean;
+  comments: CommunityComment[];
+};
+
+export type CommunityComment = {
+  id: string;
+  content: string;
+  authorName: string;
+  createdAt: string;
 };
