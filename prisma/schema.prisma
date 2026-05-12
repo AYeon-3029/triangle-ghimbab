@@ -57,14 +57,14 @@ model Product {
 }
 
 model User {
-  id             String          @id @default(cuid())
-  email          String          @unique
-  nickname       String
-  passwordHash   String
-  reviews        Review[]
-  communityPosts CommunityPost[]
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
+  id           String   @id @default(cuid())
+  email        String   @unique
+  nickname     String
+  passwordHash String
+  reviews      Review[]
+  posts        Post[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@map("users")
 }
@@ -87,14 +87,15 @@ model Review {
   @@map("reviews")
 }
 
-model CommunityPost {
+model Post {
   id        String   @id @default(cuid())
   title     String
   content   String
   authorId  String
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  imageUrls String[] @default([])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("community_posts")
+  @@map("posts")
 }

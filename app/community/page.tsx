@@ -92,6 +92,19 @@ export default function CommunityPage() {
                 </div>
                 <div style={{ color: "var(--mute)", fontSize: 12, marginTop: 4 }}>{post.authorName}</div>
                 <p style={{ whiteSpace: "pre-wrap", lineHeight: 1.6, margin: "10px 0 0" }}>{post.content}</p>
+                {post.imageUrls.length > 0 && (
+                  <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+                    {post.imageUrls.map((url) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        key={url}
+                        src={url}
+                        alt=""
+                        style={{ width: 88, height: 88, objectFit: "cover", border: "1px solid var(--line-soft)" }}
+                      />
+                    ))}
+                  </div>
+                )}
               </article>
             ))}
           </div>

@@ -53,5 +53,6 @@ export type CommunityPost = {
   title: string;
   content: string;
   authorName: string;
+  imageUrls: string[];
   createdAt: string;
 };

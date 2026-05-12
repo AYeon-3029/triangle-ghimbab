@@ -10,6 +10,7 @@ function serializePost(post: CommunityPostWithAuthor) {
     title: post.title,
     content: post.content,
     authorName: post.author.nickname,
+    imageUrls: post.imageUrls,
     createdAt: post.createdAt.toISOString(),
   };
 }
@@ -25,9 +26,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "커뮤니티 글 작성은 로그인이 필요합니다." }, { status: 401 });
   }
 
-  const { title, content } = await req.json();
+  const { title, content, imageUrls } = await req.json();
   const safeTitle = String(title ?? "").trim();
   const safeContent = String(content ?? "").trim();
+  const safeImageUrls = Array.isArray(imageUrls)
+    ? imageUrls
+        .filter((url): url is string => typeof url === "string" && url.trim().length > 0)
+        .slice(0, 3)
+    : [];
   if (safeTitle.length < 2 || safeContent.length < 5) {
     return NextResponse.json({ error: "제목과 내용을 조금 더 작성해주세요." }, { status: 400 });
   }
@@ -36,12 +42,14 @@ export async function POST(req: NextRequest) {
     title: safeTitle.slice(0, 80),
     content: safeContent.slice(0, 600),
     authorId: user.id,
+    imageUrls: safeImageUrls,
   });
   return NextResponse.json({
     id: post.id,
     title: post.title,
     content: post.content,
     authorName: post.author.nickname,
+    imageUrls: post.imageUrls,
     createdAt: post.createdAt.toISOString(),
   }, { status: 201 });
 }
