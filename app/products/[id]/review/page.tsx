@@ -205,7 +205,7 @@ export default function ReviewWritePage() {
           <span style={{ color: "var(--mute)", fontSize: 12 }}>▾</span>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" style={{ fontFamily: "var(--font-sans)", fontSize: 13 }}>
-          {products.map((p) => (
+          {[...products].sort((a, b) => a.name.localeCompare(b.name, "ko")).map((p) => (
             <DropdownMenuItem
               key={p.id}
               onClick={() => setSelectedId(p.id)}
