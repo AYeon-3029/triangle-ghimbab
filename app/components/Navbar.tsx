@@ -58,6 +58,21 @@ export default function Navbar({ right }: { right?: ReactNode }) {
         ) : (
           <Link href="/login" style={navLink}>로그인</Link>
         )}
+        <Link
+          href="https://docs.google.com/forms/d/e/1FAIpQLSfVXJyGy1t7MJv4pgHsI4Iv__ICUiiRz9mtCYThLwlC2LDXPQ/viewform?usp=header"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontSize: 10,
+            textTransform: "uppercase",
+            letterSpacing: "0.03em",
+            color: "var(--mute)",
+            textDecoration: "none",
+          }}
+        >
+          피드백
+        </Link>
         {right ?? (
           <Link href="/products/_/review" style={{ ...navLink, color: "var(--accent)" }}>
             리뷰 작성
