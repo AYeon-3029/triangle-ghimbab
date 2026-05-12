@@ -22,7 +22,7 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "20px 28px 1fr 50px 56px",
+          gridTemplateColumns: "20px 28px 1fr 50px 40px",
           gap: 8,
           alignItems: "center",
           padding: "8px 0",
@@ -131,9 +131,9 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
 
         {/* 평점 */}
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 13, fontWeight: 600 }}>{product.avgRating.toFixed(1)}</div>
-          <div style={{ marginTop: 2 }}>
-            <Stars value={product.avgRating} size={9} />
+          <div style={{ fontSize: 10, fontWeight: 700 }}>{product.avgRating.toFixed(1)}</div>
+          <div style={{ marginTop: 0 }}>
+            <Stars value={product.avgRating} size={7} />
           </div>
         </div>
       </div>
