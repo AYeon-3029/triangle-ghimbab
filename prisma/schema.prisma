@@ -56,6 +56,19 @@ model Product {
   @@map("products")
 }
 
+model User {
+  id             String          @id @default(cuid())
+  email          String          @unique
+  nickname       String
+  passwordHash   String
+  reviews        Review[]
+  communityPosts CommunityPost[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@map("users")
+}
+
 model Review {
   id         String   @id @default(cuid())
   rating     Float
@@ -63,10 +76,25 @@ model Review {
   imageUrl   String?
   tags       Tag[]
   isPurchase Boolean  @default(false)
+  authorName String   @default("익명")
+  authorId   String?
+  author     User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
   productId  String
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   @@map("reviews")
+}
+
+model CommunityPost {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("community_posts")
 }

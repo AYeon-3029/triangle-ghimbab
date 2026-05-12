@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getReviewsByProduct, createReview } from "@/backend/review.service";
+import { getCurrentUser } from "@/backend/auth";
 
 export async function GET(
   _req: NextRequest,
@@ -16,6 +17,7 @@ export async function GET(
       imageUrl: r.imageUrl,
       createdAt: r.createdAt.toISOString(),
       isPurchase: r.isPurchase,
+      authorName: r.authorName,
     }))
   );
 }
@@ -27,13 +29,22 @@ export async function POST(
   const { productId } = await params;
   const body = await req.json();
   const { rating, tags, comment, isPurchase, imageUrl } = body;
+  const user = await getCurrentUser();
 
   if (typeof rating !== "number" || rating < 0.5 || rating > 5) {
     return NextResponse.json({ error: "유효하지 않은 별점입니다." }, { status: 400 });
   }
 
   try {
-    const review = await createReview(productId, { rating, tags, comment, isPurchase, imageUrl });
+    const review = await createReview(productId, {
+      rating,
+      tags,
+      comment,
+      isPurchase,
+      imageUrl,
+      authorId: user?.id,
+      authorName: user?.nickname ?? "익명",
+    });
     return NextResponse.json(
       {
         id: review.id,
@@ -43,6 +54,7 @@ export async function POST(
         imageUrl: review.imageUrl,
         createdAt: review.createdAt.toISOString(),
         isPurchase: review.isPurchase,
+        authorName: review.authorName,
       },
       { status: 201 }
     );
