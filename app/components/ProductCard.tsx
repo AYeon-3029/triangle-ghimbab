@@ -131,7 +131,7 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
 
         {/* 평점 */}
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 10, fontWeight: 700 }}>{product.avgRating.toFixed(1)}</div>
+          <div style={{ fontSize: 12, fontWeight: 700 }}>{product.avgRating.toFixed(1)}</div>
           <div style={{ marginTop: 0 }}>
             <Stars value={product.avgRating} size={7} />
           </div>
