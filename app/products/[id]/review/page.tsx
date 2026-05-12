@@ -55,6 +55,15 @@ export default function ReviewWritePage() {
   const [photos, setPhotos] = useState<File[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const starsRef = useRef<HTMLDivElement>(null);
+
+  function ratingFromX(clientX: number): number {
+    const el = starsRef.current;
+    if (!el) return 0;
+    const { left, width } = el.getBoundingClientRect();
+    const x = Math.max(0, Math.min(clientX - left, width));
+    return Math.max(0.5, Math.min(5, Math.round((x / width) * 10) / 2));
+  }
 
   if (!isBlank && !product && products.length > 0) {
     return <div style={{ padding: 32 }}>제품을 찾을 수 없습니다.</div>;
@@ -235,7 +244,13 @@ export default function ReviewWritePage() {
               <span style={{ ...LABEL, fontSize: 11 }}>/ 5.0</span>
             </div>
           </div>
-          <div style={{ display: "flex", gap: 2, margin: "12px 0 4px", justifyContent: "center" }}>
+          <div
+            ref={starsRef}
+            style={{ display: "flex", gap: 2, margin: "12px 0 4px", justifyContent: "center", touchAction: "none" }}
+            onTouchStart={(e) => setHoverRating(ratingFromX(e.touches[0].clientX))}
+            onTouchMove={(e) => setHoverRating(ratingFromX(e.touches[0].clientX))}
+            onTouchEnd={() => { if (hoverRating > 0) setRating(hoverRating); setHoverRating(0); }}
+          >
             {[1, 2, 3, 4, 5].map((star) => {
               const isFull = displayRating >= star;
               const isHalf = !isFull && displayRating >= star - 0.5;
