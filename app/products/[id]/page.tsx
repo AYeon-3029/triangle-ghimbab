@@ -178,6 +178,9 @@ export default function ProductPage() {
               {product.name}
             </span>
             <span style={{ ...LABEL, fontSize: 11 }}>{product.price.toLocaleString()}원</span>
+            {product.isNew && (
+              <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-auto border-[var(--accent)] text-[var(--accent)] rounded-none" style={{ fontFamily: "var(--font-sans)", paddingTop: 2, paddingBottom: 0 }}>NEW</Badge>
+            )}
           </div>
           <div
             style={{
