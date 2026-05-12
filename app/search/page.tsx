@@ -3,7 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Navbar from "../components/Navbar";
 import SearchBar from "../components/SearchBar";
 import ProductCard from "../components/ProductCard";
@@ -18,7 +18,7 @@ const LABEL: React.CSSProperties = {
   color: "var(--mute)",
 };
 
-export default function SearchPage() {
+function SearchResults() {
   const searchParams = useSearchParams();
   const q = searchParams.get("q") ?? "";
 
@@ -37,8 +37,7 @@ export default function SearchPage() {
   );
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <Navbar />
+    <>
       <SearchBar initialValue={q} />
 
       <main style={{ flex: 1, padding: "0 16px 80px" }}>
@@ -94,6 +93,21 @@ export default function SearchPage() {
           ))
         )}
       </main>
+    </>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <Navbar />
+      <Suspense fallback={
+        <div style={{ padding: "32px 0", textAlign: "center", color: "var(--mute)", fontFamily: "var(--font-mono)", fontSize: 11 }}>
+          로딩 중...
+        </div>
+      }>
+        <SearchResults />
+      </Suspense>
     </div>
   );
 }
