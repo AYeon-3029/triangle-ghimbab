@@ -80,25 +80,42 @@ export default function CommunityPage() {
       <main style={{ maxWidth: 760, margin: "0 auto", padding: "24px 16px 80px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "end", marginBottom: 18 }}>
           <div>
-            <h1 style={{ margin: 0, fontSize: 24 }}>커뮤니티</h1>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700}}>커뮤니티</h1>
             <p style={{ margin: "6px 0 0", color: "var(--mute)" }}>삼각김밥 추천, 신상 정보, 조합 이야기를 나누는 공간</p>
           </div>
           <Link href="/products/_/review" style={{ color: "var(--accent)", textDecoration: "none", whiteSpace: "nowrap" }}>리뷰 쓰기</Link>
         </div>
 
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="게시글 검색"
+        <div
           style={{
-            width: "100%",
-            border: "1px solid var(--line-soft)",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            border: "1px solid var(--line)",
+            padding: "8px 10px",
             background: "var(--paper)",
-            padding: "11px 12px",
             marginBottom: 14,
-            outline: "none",
           }}
-        />
+        >
+          <div style={{ position: "relative", width: 12, height: 12, flexShrink: 0, color: "var(--mute)" }}>
+            <div style={{ width: 10, height: 10, border: "1.5px solid currentColor", borderRadius: "50%" }} />
+            <div style={{ position: "absolute", width: 6, height: 1.5, background: "currentColor", bottom: -2, right: -2, transform: "rotate(45deg)", transformOrigin: "right center" }} />
+          </div>
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="게시글 검색"
+            style={{
+              flex: 1,
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              fontSize: 12,
+              color: "var(--ink)",
+              fontFamily: "var(--font-sans)",
+            }}
+          />
+        </div>
 
         {user ? (
           <form onSubmit={handleSubmit} style={{ display: "grid", gap: 8, borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)", padding: "14px 0", marginBottom: 18 }}>
