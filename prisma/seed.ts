@@ -1,8 +1,7 @@
 /// <reference types="node" />
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { PrismaClient, Brand, Tag } from "@prisma/client";
-import { calcScore, calcTagCounts, calcTier } from "../backend/scoring.ts";
+import { PrismaClient, Brand, Tag, Tier } from "@prisma/client";
 
 const envPath = join(process.cwd(), ".env.local");
 if (existsSync(envPath)) {
@@ -16,6 +15,26 @@ if (existsSync(envPath)) {
 }
 
 const prisma = new PrismaClient();
+
+function calcScore(avgRating: number, reviewCount: number, imageCount: number): number {
+  return avgRating * (10 + reviewCount * 0.1 + imageCount * 0.3);
+}
+
+function calcTier(score: number, reviewCount: number): Tier {
+  if (reviewCount < 1) return Tier.Unknown;
+  if (score >= 50) return Tier.S;
+  if (score >= 40) return Tier.A;
+  if (score >= 30) return Tier.B;
+  return Tier.C;
+}
+
+function calcTagCounts(tagLists: Tag[][]): Record<string, number> {
+  const counts: Record<string, number> = {};
+  for (const tags of tagLists) {
+    for (const tag of tags) counts[tag] = (counts[tag] ?? 0) + 1;
+  }
+  return counts;
+}
 
 // -------------------------------------------------------
 // 1. 제품 + 리뷰 데이터를 여기에 입력하세요
