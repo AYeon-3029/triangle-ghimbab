@@ -56,6 +56,20 @@ model Product {
   @@map("products")
 }
 
+model User {
+  id           String          @id @default(cuid())
+  email        String          @unique
+  password     String
+  nickname     String          @unique
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  reviews      Review[]
+  posts        Post[]
+  comments     Comment[]
+
+  @@map("users")
+}
+
 model Review {
   id         String   @id @default(cuid())
   rating     Float
@@ -65,8 +79,38 @@ model Review {
   isPurchase Boolean  @default(false)
   productId  String
   product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  authorId   String?
+  author     User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorName String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   @@map("reviews")
+}
+
+model Post {
+  id        String    @id @default(cuid())
+  title     String
+  content   String
+  imageUrls String[]
+  authorId  String
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("comments")
 }
