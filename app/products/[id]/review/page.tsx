@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Star, StarHalf } from "lucide-react";
 import { TAG_LABEL, type Tag, type Product, type User } from "../../../lib/data";
+import { TAG_ICON } from "../../../lib/tag-icons";
 import { fetchMe, fetchProducts, insertReview, uploadReviewImage } from "../../../lib/supabase";
 import {
   DropdownMenu,
@@ -379,11 +380,15 @@ export default function ReviewWritePage() {
                 <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
                   {g.items.map((t) => {
                     const on = selectedTags.includes(t);
+                    const Icon = TAG_ICON[t];
                     return (
                       <button
                         key={t}
                         onClick={() => toggleTag(t)}
                         style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 4,
                           padding: "3px 8px",
                           border: "1px solid var(--mute)",
                           background: on ? "var(--line)" : "var(--paper)",
@@ -393,6 +398,7 @@ export default function ReviewWritePage() {
                           fontFamily: "var(--font-sans)",
                         }}
                       >
+                        <Icon size={13} />
                         {on ? "✓ " : ""}{TAG_LABEL[t]}
                       </button>
                     );
@@ -478,8 +484,8 @@ export default function ReviewWritePage() {
           style={{
             width: "100%",
             padding: "12px 0",
-            background: submitting ? "var(--fill-2)" : "var(--ink)",
-            color: submitting ? "var(--line-soft)" : "var(--paper)",
+            background: submitting ? "var(--fill)" : "var(--ink)",
+            color: "var(--paper)",
             border: "none",
             fontSize: 14,
             fontWeight: 700,

@@ -1,16 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Navbar from "./components/Navbar";
 import SearchBar from "./components/SearchBar";
 import TagFilter from "./components/TagFilter";
+import AllergenFilter from "./components/AllergenFilter";
 import ProductCard from "./components/ProductCard";
+import { Switch } from "@/components/ui/switch";
 import { TAG_LABEL, type Tag, type Product } from "./lib/data";
+import { TAG_ICON } from "./lib/tag-icons";
 import { fetchProducts } from "./lib/supabase";
 
-const FILTER_TAGS: Array<{ value: Tag | "전체"; label: string }> = [
-  { value: "전체", label: "전체" },
-  ...(Object.entries(TAG_LABEL) as [Tag, string][]).map(([value, label]) => ({ value, label })),
+const FILTER_TAGS = [
+  { value: "전체" as Tag | "전체", label: "전체", Icon: undefined },
+  ...(Object.entries(TAG_LABEL) as [Tag, string][]).map(([value, label]) => ({
+    value,
+    label,
+    Icon: TAG_ICON[value],
+  })),
 ];
 
 const LABEL: React.CSSProperties = {
@@ -25,6 +32,8 @@ export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState<Tag | "전체">("전체");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [allergenFilterOn, setAllergenFilterOn] = useState(false);
+  const [selectedAllergens, setSelectedAllergens] = useState<string[]>([]);
 
   useEffect(() => {
     fetchProducts().then((data) => {
@@ -33,9 +42,16 @@ export default function HomePage() {
     });
   }, []);
 
+  const allAllergens = useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => p.allergens.forEach((a) => set.add(a)));
+    return Array.from(set).sort();
+  }, [products]);
+
   const filtered = products.filter((p) => {
-    if (activeFilter === "전체") return true;
-    return p.tags.includes(activeFilter as Tag);
+    if (activeFilter !== "전체" && !p.tags.includes(activeFilter as Tag)) return false;
+    if (selectedAllergens.length > 0 && selectedAllergens.some((a) => p.allergens.includes(a))) return false;
+    return true;
   });
   const sorted = [...filtered].sort((a, b) => b.avgRating - a.avgRating);
   const maxReviews = products.length > 0 ? Math.max(...products.map((p) => p.reviewCount)) : 1;
@@ -44,15 +60,22 @@ export default function HomePage() {
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Navbar />
       <div style={{ position: "sticky", top: 48, zIndex: 30, background: "var(--paper)" }}>
-        <SearchBar />
+        <SearchBar allergens={allergenFilterOn ? selectedAllergens : []} />
         <TagFilter
-        items={FILTER_TAGS.map((f) => f.label)}
-        value={FILTER_TAGS.find((f) => f.value === activeFilter)?.label ?? "전체"}
-        onChange={(label) => {
-          const found = FILTER_TAGS.find((f) => f.label === label);
-          setActiveFilter(found?.value ?? "전체");
-        }}
-      />
+          items={FILTER_TAGS.map((f) => ({ label: f.label, Icon: f.Icon }))}
+          value={FILTER_TAGS.find((f) => f.value === activeFilter)?.label ?? "전체"}
+          onChange={(label) => {
+            const found = FILTER_TAGS.find((f) => f.label === label);
+            setActiveFilter(found?.value ?? "전체");
+          }}
+        />
+        {allergenFilterOn && allAllergens.length > 0 && (
+          <AllergenFilter
+            items={allAllergens}
+            selected={selectedAllergens}
+            onChange={setSelectedAllergens}
+          />
+        )}
       </div>
 
       <main style={{ flex: 1, padding: "0 16px 80px" }}>
@@ -68,6 +91,16 @@ export default function HomePage() {
           <span style={{ fontSize: 16, fontWeight: 700, letterSpacing: "-0.015em" }}>
             삼각김밥 티어리스트
           </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ ...LABEL, fontFamily: "var(--font-sans)", fontSize: 10 }}>알레르기 필터</span>
+            <Switch
+              checked={allergenFilterOn}
+              onCheckedChange={(v) => {
+                setAllergenFilterOn(v);
+                if (!v) setSelectedAllergens([]);
+              }}
+            />
+          </div>
         </div>
 
         {/* 테이블 헤더 */}

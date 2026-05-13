@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 export default function SearchBar({
   placeholder = "삼각김밥 이름·재료 검색",
   initialValue = "",
+  allergens = [],
 }: {
   placeholder?: string;
   initialValue?: string;
+  allergens?: string[];
 }) {
   const [query, setQuery] = useState(initialValue);
   const router = useRouter();
@@ -16,7 +18,10 @@ export default function SearchBar({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const q = query.trim();
-    if (q) router.push(`/search?q=${encodeURIComponent(q)}`);
+    if (!q) return;
+    const params = new URLSearchParams({ q });
+    if (allergens.length > 0) params.set("allergens", allergens.join(","));
+    router.push(`/search?${params.toString()}`);
   }
 
   return (

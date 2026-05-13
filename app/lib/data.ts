@@ -37,6 +37,7 @@ export type Product = {
   imageUrl: string;
   isNew: boolean;
   tier: Tier;
+  allergens: string[];  // parsed from DB allergens string (comma-separated)
 };
 
 export type User = {

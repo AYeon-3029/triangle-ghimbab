@@ -1,7 +1,14 @@
-﻿"use client";
+"use client";
+
+import type { IconType } from "react-icons/lib";
+
+type FilterItem = {
+  label: string;
+  Icon?: IconType;
+};
 
 type Props = {
-  items: string[];
+  items: FilterItem[];
   value: string;
   onChange: (val: string) => void;
 };
@@ -18,13 +25,16 @@ export default function TagFilter({ items, value, onChange }: Props) {
       }}
     >
       {items.map((item) => {
-        const active = item === value;
+        const active = item.label === value;
         return (
           <button
-            key={item}
-            onClick={() => onChange(item)}
+            key={item.label}
+            onClick={() => onChange(item.label)}
             style={{
               flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
               padding: "3px 8px",
               border: `1px solid ${active ? "var(--line)" : "var(--line-soft)"}`,
               background: active ? "var(--line)" : "transparent",
@@ -35,7 +45,8 @@ export default function TagFilter({ items, value, onChange }: Props) {
               whiteSpace: "nowrap",
             }}
           >
-            {item}
+            {item.Icon && <item.Icon size={13} />}
+            {item.label}
           </button>
         );
       })}
