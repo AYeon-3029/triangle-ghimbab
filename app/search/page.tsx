@@ -34,6 +34,11 @@ function SearchResults() {
   const [selectedAllergens, setSelectedAllergens] = useState<string[]>(initialAllergens);
 
   useEffect(() => {
+    sessionStorage.setItem("allergen_filter_on", String(allergenFilterOn));
+    sessionStorage.setItem("allergen_selected", JSON.stringify(selectedAllergens));
+  }, [allergenFilterOn, selectedAllergens]);
+
+  useEffect(() => {
     fetchProducts().then((data) => {
       setProducts(data);
       setLoading(false);
@@ -71,10 +76,12 @@ function SearchResults() {
 
       <main style={{ flex: 1, padding: "0 16px 80px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "4px 0 8px" }}>
-          <span style={{ fontSize: 16, fontWeight: 600 }}>&ldquo;{q}&rdquo; 검색 결과</span>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+            <span style={{ fontSize: 16, fontWeight: 600 }}>&ldquo;{q}&rdquo; 검색 결과</span>
             {!loading && <span style={LABEL}>{results.length}건</span>}
-            <span style={{ ...LABEL, fontSize: 10 }}>알레르기 필터</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <span style={{ ...LABEL, fontFamily: "var(--font-sans)", fontSize: 10 }}>알레르기 필터</span>
             <Switch
               checked={allergenFilterOn}
               onCheckedChange={(v) => {
