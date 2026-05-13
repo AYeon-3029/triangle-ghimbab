@@ -209,7 +209,7 @@ export default function ProductPage() {
 
         {/* 알레르기 정보 */}
         {product.allergens.length > 0 && (
-          <div style={{ background: "var(--paper)", padding: "8px 16px", borderBottom: "1px solid var(--line-soft)", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          <div style={{ background: "var(--paper)", padding: "8px 16px", borderBottom: "1px solid var(--line-soft)", display: "flex", alignItems: "center", gap: 3, flexWrap: "wrap" }}>
             <span style={{ ...LABEL, fontSize: 9, flexShrink: 0 }}>알레르기 유발 성분</span>
             {product.allergens.map((a) => (
               <span
@@ -218,8 +218,8 @@ export default function ProductPage() {
                   fontSize: 9,
                   fontFamily: "var(--font-sans)",
                   padding: "1px 6px",
-                  border: "1px solid var(--accent-2)",
-                  color: "var(--ink)",
+                  //border: "1px solid var(--accent-2)",
+                  color: "var(--mute)",
                   background: "transparent",
                 }}
               >
@@ -330,7 +330,7 @@ export default function ProductPage() {
                   {r.tags.map((t) => {
                     const Icon = TAG_ICON[t];
                     return (
-                      <span key={t} style={{ ...LABEL, fontSize: 10, display: "inline-flex", alignItems: "center", gap: 3 }}>
+                      <span key={t} style={{ ...LABEL, fontFamily: "var(--font-sans)", fontSize: 10, display: "inline-flex", alignItems: "center", gap: 3 }}>
                         <Icon size={12} />
                         {TAG_LABEL[t]}
                       </span>
