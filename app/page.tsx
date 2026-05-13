@@ -32,8 +32,22 @@ export default function HomePage() {
   const [activeFilter, setActiveFilter] = useState<Tag | "전체">("전체");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [allergenFilterOn, setAllergenFilterOn] = useState(false);
-  const [selectedAllergens, setSelectedAllergens] = useState<string[]>([]);
+  const [allergenFilterOn, setAllergenFilterOn] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return sessionStorage.getItem("allergen_filter_on") === "true";
+  });
+  const [selectedAllergens, setSelectedAllergens] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const s = sessionStorage.getItem("allergen_selected");
+      return s ? JSON.parse(s) : [];
+    } catch { return []; }
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem("allergen_filter_on", String(allergenFilterOn));
+    sessionStorage.setItem("allergen_selected", JSON.stringify(selectedAllergens));
+  }, [allergenFilterOn, selectedAllergens]);
 
   useEffect(() => {
     fetchProducts().then((data) => {
