@@ -25,6 +25,7 @@ export async function GET(req: NextRequest) {
         .map(([t]) => t as Tag),
       imageUrl: p.imageUrl,
       isNew: p.isNew,
+      allergens: p.allergens ? p.allergens.split(",").map((s) => s.trim()).filter(Boolean) : [],
     }))
   );
 }

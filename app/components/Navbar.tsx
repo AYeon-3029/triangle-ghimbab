@@ -49,7 +49,14 @@ export default function Navbar({ right }: { right?: ReactNode }) {
       </Link>
 
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <Link href="/community" style={navLink}>커뮤니티</Link>
+        <Link
+          href="https://docs.google.com/forms/d/e/1FAIpQLSfVXJyGy1t7MJv4pgHsI4Iv__ICUiiRz9mtCYThLwlC2LDXPQ/viewform?usp=header"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ ...navLink, color: "var(--line-soft)"}}
+        >
+          피드백
+        </Link>
         {user ? (
           <>
             <span style={{ ...navLink, color: "var(--ink)" }}>{user.nickname}</span>
@@ -64,14 +71,7 @@ export default function Navbar({ right }: { right?: ReactNode }) {
         ) : (
           <Link href="/login" style={navLink}>로그인</Link>
         )}
-        <Link
-          href="https://docs.google.com/forms/d/e/1FAIpQLSfVXJyGy1t7MJv4pgHsI4Iv__ICUiiRz9mtCYThLwlC2LDXPQ/viewform?usp=header"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ ...navLink, color: "var(--mute)"}}
-        >
-          피드백
-        </Link>
+        <Link href="/community" style={navLink}>커뮤니티</Link>
         {right ?? (
           <Link href="/products/_/review" style={{ ...navLink, color: "var(--accent)" }}>
             리뷰 작성

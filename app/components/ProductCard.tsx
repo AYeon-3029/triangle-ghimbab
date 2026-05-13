@@ -3,6 +3,7 @@ import TierBadge from "./TierBadge";
 import Stars from "./Stars";
 import type { Product } from "../lib/data";
 import { TAG_LABEL, BRAND_LABEL } from "../lib/data";
+import { TAG_ICON } from "../lib/tag-icons";
 import { Badge } from "@/components/ui/badge";
 
 export type { Product } from "../lib/data";
@@ -94,11 +95,15 @@ export default function ProductCard({ product, rank, maxReviews }: Props) {
                 {product.price.toLocaleString()}원
               </span>
               <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--line-soft)" }}>·</span>
-              {product.tags.slice(0, 2).map((t) => (
-                <span key={t} style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--mute)" }}>
-                  #{TAG_LABEL[t]}
-                </span>
-              ))}
+              {product.tags.slice(0, 2).map((t) => {
+                const Icon = TAG_ICON[t];
+                return (
+                  <span key={t} style={{ display: "inline-flex", alignItems: "center", gap: 2, fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--mute)" }}>
+                    <Icon size={11} />
+                    {TAG_LABEL[t]}
+                  </span>
+                );
+              })}
             </div>
           </div>
         </div>

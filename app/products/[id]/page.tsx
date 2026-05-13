@@ -6,6 +6,7 @@ import Link from "next/link";
 import TierBadge from "../../components/TierBadge";
 import Stars from "../../components/Stars";
 import { TAG_LABEL, type Tag, type Product } from "../../lib/data";
+import { TAG_ICON } from "../../lib/tag-icons";
 import { fetchProduct, fetchReviews, type ReviewRow } from "../../lib/supabase";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -120,14 +121,14 @@ export default function ProductPage() {
       >
         <button
           onClick={() => router.back()}
-          style={{ ...MONO, fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--mute)" }}
+          style={{ fontFamily: "var(--font-sans)", fontSize: 11, background: "none", border: "none", cursor: "pointer", color: "var(--mute)" }}
         >
           ◂ 뒤로
         </button>
         <span style={{ fontSize: 13, fontWeight: 600 }}>리뷰</span>
         <Link
           href={`/products/${id}/review`}
-          style={{ ...MONO, fontSize: 11, color: "var(--accent)", textDecoration: "none" }}
+          style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: "var(--accent)", textDecoration: "none" }}
         >
           ＋ 작성
         </Link>
@@ -206,11 +207,35 @@ export default function ProductPage() {
           </div>
         </div>
 
+        {/* 알레르기 정보 */}
+        {product.allergens.length > 0 && (
+          <div style={{ background: "var(--paper)", padding: "8px 16px", borderBottom: "1px solid var(--line-soft)", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <span style={{ ...LABEL, fontSize: 9, flexShrink: 0 }}>알레르기 유발 성분</span>
+            {product.allergens.map((a) => (
+              <span
+                key={a}
+                style={{
+                  fontSize: 9,
+                  fontFamily: "var(--font-sans)",
+                  padding: "1px 6px",
+                  border: "1px solid var(--accent-2)",
+                  color: "var(--ink)",
+                  background: "transparent",
+                }}
+              >
+                {a}
+              </span>
+            ))}
+          </div>
+        )}
+
         {/* 키워드 집계 */}
         <div style={{ padding: "12px 16px"}}>
           <div style={LABEL}>이 제품의 키워드</div>
           <div style={{ display: "grid", gap: 5, marginTop: 8 }}>
-            {tagAggregate.map((t) => (
+            {tagAggregate.map((t) => {
+              const Icon = TAG_ICON[t.tag];
+              return (
               <div
                 key={t.tag}
                 style={{
@@ -220,7 +245,10 @@ export default function ProductPage() {
                   alignItems: "center",
                 }}
               >
-                <span style={{ fontSize: 11 }}>#{TAG_LABEL[t.tag]}</span>
+                <span style={{ fontSize: 11, fontFamily: "var(--font-sans)", color: "var(--ink)", display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <Icon size={13} />
+                  {TAG_LABEL[t.tag]}
+                </span>
                 <div style={{ height: 5, background: "var(--fill)", position: "relative" }}>
                   <div
                     style={{
@@ -235,7 +263,8 @@ export default function ProductPage() {
                 </div>
                 <span style={{ ...LABEL, textAlign: "right" }}>{t.pct}%</span>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -298,9 +327,15 @@ export default function ProductPage() {
               </div>
               {r.tags.length > 0 && (
                 <div style={{ display: "flex", gap: 4, marginTop: 6, flexWrap: "wrap" }}>
-                  {r.tags.map((t) => (
-                    <span key={t} style={{ ...LABEL, fontSize: 10 }}>#{TAG_LABEL[t]}</span>
-                  ))}
+                  {r.tags.map((t) => {
+                    const Icon = TAG_ICON[t];
+                    return (
+                      <span key={t} style={{ ...LABEL, fontSize: 10, display: "inline-flex", alignItems: "center", gap: 3 }}>
+                        <Icon size={12} />
+                        {TAG_LABEL[t]}
+                      </span>
+                    );
+                  })}
                 </div>
               )}
               {r.imageUrl && (
