@@ -1,3 +1,23 @@
+export type Allergen =
+  | "egg" | "milk" | "soybean" | "wheat" | "crab" | "shrimp"
+  | "pork" | "tomato" | "sulfite" | "chicken" | "beef" | "squid" | "shellfish";
+
+export const ALLERGEN_LABEL: Record<Allergen, string> = {
+  egg:      "계란",
+  milk:     "우유",
+  soybean:  "대두",
+  wheat:    "밀",
+  crab:     "게",
+  shrimp:   "새우",
+  pork:     "돼지고기",
+  tomato:   "토마토",
+  sulfite:  "아황산류",
+  chicken:  "닭고기",
+  beef:     "쇠고기",
+  squid:    "오징어",
+  shellfish: "조개류",
+};
+
 export type Tag =
   | "withDrink" | "Salty" | "Heavy" | "Mild"
   | "Spicy" | "Normal" | "Dry" | "Sweety" | "withRamyeon" | "Chewy" | "Fishy";
@@ -37,7 +57,7 @@ export type Product = {
   imageUrl: string;
   isNew: boolean;
   tier: Tier;
-  allergens: string[];  // parsed from DB allergens string (comma-separated)
+  allergens: Allergen[];
 };
 
 export type User = {

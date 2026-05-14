@@ -10,7 +10,7 @@ import AllergenFilter from "../components/AllergenFilter";
 import ProductCard from "../components/ProductCard";
 import { Switch } from "@/components/ui/switch";
 import { fetchProducts } from "../lib/supabase";
-import type { Product } from "../lib/data";
+import type { Product, Allergen } from "../lib/data";
 
 const LABEL: React.CSSProperties = {
   fontFamily: "var(--font-mono)",
@@ -25,13 +25,13 @@ function SearchResults() {
   const q = searchParams.get("q") ?? "";
   const initialAllergens = useMemo(() => {
     const raw = searchParams.get("allergens");
-    return raw ? raw.split(",").map((s) => s.trim()).filter(Boolean) : [];
+    return raw ? (raw.split(",").map((s) => s.trim()).filter(Boolean) as Allergen[]) : [];
   }, [searchParams]);
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [allergenFilterOn, setAllergenFilterOn] = useState(initialAllergens.length > 0);
-  const [selectedAllergens, setSelectedAllergens] = useState<string[]>(initialAllergens);
+  const [selectedAllergens, setSelectedAllergens] = useState<Allergen[]>(initialAllergens);
 
   useEffect(() => {
     sessionStorage.setItem("allergen_filter_on", String(allergenFilterOn));
@@ -46,7 +46,7 @@ function SearchResults() {
   }, []);
 
   const allAllergens = useMemo(() => {
-    const set = new Set<string>();
+    const set = new Set<Allergen>();
     products.forEach((p) => p.allergens.forEach((a) => set.add(a)));
     return Array.from(set).sort();
   }, [products]);

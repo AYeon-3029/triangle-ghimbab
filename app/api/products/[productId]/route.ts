@@ -23,7 +23,7 @@ export async function GET(
         .map(([t]) => t as Tag),
       imageUrl: p.imageUrl,
       isNew: p.isNew,
-      allergens: p.allergens ? p.allergens.split(",").map((s: string) => s.trim()).filter(Boolean) : [],
+      allergens: p.allergens,
     });
   } catch {
     return NextResponse.json({ error: "제품을 찾을 수 없습니다." }, { status: 404 });

@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import TierBadge from "../../components/TierBadge";
 import Stars from "../../components/Stars";
-import { TAG_LABEL, type Tag, type Product } from "../../lib/data";
+import { TAG_LABEL, ALLERGEN_LABEL, type Tag, type Product } from "../../lib/data";
 import { TAG_ICON } from "../../lib/tag-icons";
 import { fetchProduct, fetchReviews, type ReviewRow } from "../../lib/supabase";
 import { Badge } from "@/components/ui/badge";
@@ -223,7 +223,7 @@ export default function ProductPage() {
                   background: "transparent",
                 }}
               >
-                {a}
+                {ALLERGEN_LABEL[a]}
               </span>
             ))}
           </div>

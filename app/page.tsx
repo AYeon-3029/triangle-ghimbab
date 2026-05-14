@@ -7,7 +7,7 @@ import TagFilter from "./components/TagFilter";
 import AllergenFilter from "./components/AllergenFilter";
 import ProductCard from "./components/ProductCard";
 import { Switch } from "@/components/ui/switch";
-import { TAG_LABEL, type Tag, type Product } from "./lib/data";
+import { TAG_LABEL, type Tag, type Product, type Allergen } from "./lib/data";
 import { TAG_ICON } from "./lib/tag-icons";
 import { fetchProducts } from "./lib/supabase";
 
@@ -36,11 +36,11 @@ export default function HomePage() {
     if (typeof window === "undefined") return false;
     return sessionStorage.getItem("allergen_filter_on") === "true";
   });
-  const [selectedAllergens, setSelectedAllergens] = useState<string[]>(() => {
+  const [selectedAllergens, setSelectedAllergens] = useState<Allergen[]>(() => {
     if (typeof window === "undefined") return [];
     try {
       const s = sessionStorage.getItem("allergen_selected");
-      return s ? JSON.parse(s) : [];
+      return s ? (JSON.parse(s) as Allergen[]) : [];
     } catch { return []; }
   });
 
@@ -57,7 +57,7 @@ export default function HomePage() {
   }, []);
 
   const allAllergens = useMemo(() => {
-    const set = new Set<string>();
+    const set = new Set<Allergen>();
     products.forEach((p) => p.allergens.forEach((a) => set.add(a)));
     return Array.from(set).sort();
   }, [products]);
