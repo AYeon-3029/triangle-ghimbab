@@ -9,7 +9,6 @@ import SearchBar from "../components/SearchBar";
 import AllergenFilter from "../components/AllergenFilter";
 import ProductCard from "../components/ProductCard";
 import { Switch } from "@/components/ui/switch";
-import { fetchProducts } from "../lib/supabase";
 import { sortAllergens, type Product, type Allergen } from "../lib/data";
 
 const LABEL: React.CSSProperties = {
@@ -39,11 +38,15 @@ function SearchResults() {
   }, [allergenFilterOn, selectedAllergens]);
 
   useEffect(() => {
-    fetchProducts().then((data) => {
-      setProducts(data);
-      setLoading(false);
-    });
-  }, []);
+    setLoading(true);
+    const url = q.trim() ? `/api/products?q=${encodeURIComponent(q.trim())}` : "/api/products";
+    fetch(url)
+      .then((res) => res.ok ? res.json() : [])
+      .then((data) => {
+        setProducts(data);
+        setLoading(false);
+      });
+  }, [q]);
 
   const allAllergens = useMemo(() => {
     const set = new Set<Allergen>();
@@ -52,7 +55,6 @@ function SearchResults() {
   }, [products]);
 
   const results = products.filter((product) => {
-    if (!product.name.toLowerCase().includes(q.toLowerCase())) return false;
     if (selectedAllergens.length > 0 && selectedAllergens.some((a) => product.allergens.includes(a))) return false;
     return true;
   });

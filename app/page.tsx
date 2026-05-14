@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 import Navbar from "./components/Navbar";
 import SearchBar from "./components/SearchBar";
 import TagFilter from "./components/TagFilter";
 import AllergenFilter from "./components/AllergenFilter";
 import ProductCard from "./components/ProductCard";
+import TierBadge from "./components/TierBadge";
+import Stars from "./components/Stars";
 import { Switch } from "@/components/ui/switch";
 import { TAG_LABEL, sortAllergens, type Tag, type Product, type Allergen } from "./lib/data";
 import { TAG_ICON } from "./lib/tag-icons";
@@ -62,6 +65,7 @@ export default function HomePage() {
     return sortAllergens(Array.from(set));
   }, [products]);
 
+  const newProducts = products.filter((p) => p.isNew);
   const filtered = products.filter((p) => {
     if (activeFilter !== "전체" && !p.tags.includes(activeFilter as Tag)) return false;
     if (selectedAllergens.length > 0 && selectedAllergens.some((a) => p.allergens.includes(a))) return false;
@@ -93,6 +97,62 @@ export default function HomePage() {
       </div>
 
       <main style={{ flex: 1, padding: "0 16px 80px" }}>
+
+        {/* 신제품 섹션 */}
+        {!loading && newProducts.length > 0 && (
+          <div style={{ margin: "12px 0 16px" }}>
+            <div style={{ fontFamily: "var(--font-sans)", fontSize: 9, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--mute)", marginBottom: 8 }}>신제품</div>
+            <div className="no-scrollbar" style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }}>
+              {newProducts.map((p) => (
+                <Link
+                  key={p.id}
+                  href={`/products/${p.id}`}
+                  style={{ textDecoration: "none", color: "inherit", flexShrink: 0 }}
+                >
+                  <div
+                    style={{
+                      width: 100,
+                      border: "1px solid var(--line-soft)",
+                      padding: 8,
+                      background: "var(--paper)",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 5,
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "100%",
+                        height: 72,
+                        background: "var(--fill-2)",
+                        border: "1px solid var(--line-soft)",
+                        overflow: "hidden",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {p.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={p.imageUrl} alt={p.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <span style={{ fontFamily: "var(--font-mono)", fontSize: 20, color: "var(--mute)" }}>{p.name[0]}</span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 10, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {p.name}
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                      <TierBadge tier={p.tier} size={18} />
+                      <Stars value={p.avgRating} size={8} />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 섹션 헤더 */}
         <div
           style={{

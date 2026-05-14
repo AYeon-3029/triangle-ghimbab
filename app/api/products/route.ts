@@ -7,8 +7,9 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const brand = searchParams.get("brand") as Brand | null;
   const tagLimit = Number(searchParams.get("tagLimit") ?? 10);
+  const q = searchParams.get("q") ?? undefined;
 
-  const products = await getAllProducts(brand ?? undefined, tagLimit);
+  const products = await getAllProducts(brand ?? undefined, tagLimit, q);
 
   return NextResponse.json(
     products.map((p) => ({

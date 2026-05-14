@@ -1,10 +1,10 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import type { CommunityPost, User } from "../lib/data";
-import { fetchMe } from "../lib/supabase";
+import { fetchMe, uploadCommunityImage } from "../lib/supabase";
 import { toast } from "sonner";
 
 function formatDate(iso: string) {
@@ -22,8 +22,10 @@ export default function CommunityPage() {
   const [query, setQuery] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [photos, setPhotos] = useState<File[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let active = true;
@@ -55,10 +57,17 @@ export default function CommunityPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitting(true);
+
+    const imageUrls: string[] = [];
+    for (const file of photos) {
+      const url = await uploadCommunityImage(file);
+      if (url) imageUrls.push(url);
+    }
+
     const res = await fetch("/api/community", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title, content }),
+      body: JSON.stringify({ title, content, imageUrls }),
     });
     const data = await res.json().catch(() => ({}));
     setSubmitting(false);
@@ -71,6 +80,7 @@ export default function CommunityPage() {
     setPosts((prev) => [data, ...prev]);
     setTitle("");
     setContent("");
+    setPhotos([]);
     toast.success("커뮤니티에 글을 올렸습니다.");
   }
 
@@ -120,6 +130,54 @@ export default function CommunityPage() {
           <form onSubmit={handleSubmit} style={{ display: "grid", gap: 8, borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)", padding: "14px 0", marginBottom: 18 }}>
             <input value={title} onChange={(e) => setTitle(e.target.value.slice(0, 80))} placeholder="제목" style={{ border: "1px solid var(--line-soft)", background: "var(--paper)", padding: 10, outline: "none" }} required />
             <textarea value={content} onChange={(e) => setContent(e.target.value.slice(0, 600))} placeholder="내용" style={{ border: "1px solid var(--line-soft)", background: "var(--paper)", padding: 10, minHeight: 90, resize: "vertical", outline: "none" }} required />
+
+            {/* 사진 첨부 */}
+            <div>
+              <div style={{ fontFamily: "var(--font-sans)", fontSize: 9, letterSpacing: "0.05em", textTransform: "uppercase", color: "var(--mute)", marginBottom: 6 }}>
+                사진 (최대 3장)
+              </div>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {photos.map((file, i) => (
+                  <div key={i} style={{ position: "relative" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt=""
+                      style={{ width: 64, height: 64, objectFit: "cover", border: "1px solid var(--line-soft)", display: "block" }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setPhotos((prev) => prev.filter((_, j) => j !== i))}
+                      style={{ position: "absolute", top: 2, right: 2, width: 16, height: 16, background: "var(--line)", color: "var(--paper)", border: "none", cursor: "pointer", fontSize: 10, display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                {photos.length < 3 && (
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    style={{ width: 64, height: 64, border: "1px dashed var(--line-soft)", background: "transparent", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, cursor: "pointer" }}
+                  >
+                    <span style={{ fontSize: 16, color: "var(--mute)", lineHeight: 1 }}>＋</span>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, color: "var(--mute)", letterSpacing: "0.05em" }}>사진 추가</span>
+                  </button>
+                )}
+              </div>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) setPhotos((prev) => [...prev, file].slice(0, 3));
+                  e.target.value = "";
+                }}
+              />
+            </div>
+
             <button disabled={submitting} style={{ border: 0, background: "var(--ink)", color: "var(--paper)", padding: "10px 0", fontWeight: 700, cursor: submitting ? "not-allowed" : "pointer" }}>
               {submitting ? "올리는 중..." : `${user.nickname}으로 글쓰기`}
             </button>

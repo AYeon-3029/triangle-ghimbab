@@ -49,6 +49,17 @@ export async function uploadReviewImage(file: File): Promise<string | null> {
   return data.publicUrl;
 }
 
+export async function uploadCommunityImage(file: File): Promise<string | null> {
+  const supabase = getSupabaseClient();
+  if (!supabase) return null;
+  const ext = file.name.split(".").pop();
+  const path = `community/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await supabase.storage.from("review-images").upload(path, file);
+  if (error) return null;
+  const { data } = supabase.storage.from("review-images").getPublicUrl(path);
+  return data.publicUrl;
+}
+
 export async function insertReview(input: {
   productId: string;
   rating: number;
