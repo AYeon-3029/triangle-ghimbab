@@ -10,9 +10,12 @@ export type CreateProductInput = {
 
 export type UpdateProductInput = Partial<CreateProductInput>;
 
-export async function getAllProducts(brand?: Brand, tagLimit = 3) {
+export async function getAllProducts(brand?: Brand, tagLimit = 3, q?: string) {
   const products = await prisma.product.findMany({
-    where: brand ? { brand } : undefined,
+    where: {
+      ...(brand ? { brand } : {}),
+      ...(q ? { name: { contains: q, mode: "insensitive" } } : {}),
+    },
     include: { _count: { select: { reviews: true } } },
   });
 
