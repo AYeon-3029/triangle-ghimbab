@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import type { Allergen } from "@/app/lib/data";
 
 export default function SearchBar({
   placeholder = "삼각김밥 이름·재료 검색",
@@ -10,7 +11,7 @@ export default function SearchBar({
 }: {
   placeholder?: string;
   initialValue?: string;
-  allergens?: string[];
+  allergens?: Allergen[];
 }) {
   const [query, setQuery] = useState(initialValue);
   const router = useRouter();

@@ -1,13 +1,15 @@
 "use client";
 
+import { ALLERGEN_LABEL, type Allergen } from "@/app/lib/data";
+
 type Props = {
-  items: string[];
-  selected: string[];
-  onChange: (selected: string[]) => void;
+  items: Allergen[];
+  selected: Allergen[];
+  onChange: (selected: Allergen[]) => void;
 };
 
 export default function AllergenFilter({ items, selected, onChange }: Props) {
-  function toggle(item: string) {
+  function toggle(item: Allergen) {
     onChange(
       selected.includes(item)
         ? selected.filter((s) => s !== item)
@@ -43,7 +45,7 @@ export default function AllergenFilter({ items, selected, onChange }: Props) {
               whiteSpace: "nowrap",
             }}
           >
-            {item}
+            {ALLERGEN_LABEL[item]}
           </button>
         );
       })}

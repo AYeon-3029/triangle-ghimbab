@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import TierBadge from "../../components/TierBadge";
 import Stars from "../../components/Stars";
-import { TAG_LABEL, type Tag, type Product } from "../../lib/data";
+import { TAG_LABEL, ALLERGEN_LABEL, sortAllergens, type Tag, type Product } from "../../lib/data";
 import { TAG_ICON } from "../../lib/tag-icons";
 import { fetchProduct, fetchReviews, type ReviewRow } from "../../lib/supabase";
 import { Badge } from "@/components/ui/badge";
@@ -211,7 +211,7 @@ export default function ProductPage() {
         {product.allergens.length > 0 && (
           <div style={{ background: "var(--paper)", padding: "8px 16px", borderBottom: "1px solid var(--line-soft)", display: "flex", alignItems: "center", gap: 3, flexWrap: "wrap" }}>
             <span style={{ ...LABEL, fontSize: 9, flexShrink: 0 }}>알레르기 유발 성분</span>
-            {product.allergens.map((a) => (
+            {sortAllergens(product.allergens).map((a) => (
               <span
                 key={a}
                 style={{
@@ -223,7 +223,7 @@ export default function ProductPage() {
                   background: "transparent",
                 }}
               >
-                {a}
+                {ALLERGEN_LABEL[a]}
               </span>
             ))}
           </div>

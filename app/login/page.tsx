@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Navbar from "../components/Navbar";
 import { toast } from "sonner";
 
@@ -77,9 +76,6 @@ export default function LoginPage() {
         >
           {mode === "login" ? "계정이 없으면 회원가입" : "이미 계정이 있으면 로그인"}
         </button>
-        <div style={{ marginTop: 20 }}>
-          <Link href="/" style={{ color: "var(--mute)", textDecoration: "none" }}>메인으로 돌아가기</Link>
-        </div>
       </main>
     </div>
   );
