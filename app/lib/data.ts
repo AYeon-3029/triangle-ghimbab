@@ -18,6 +18,16 @@ export const ALLERGEN_LABEL: Record<Allergen, string> = {
   shellfish: "조개류",
 };
 
+// 식약처 알레르기 표시 의무 순서 기준
+const ALLERGEN_ORDER: Allergen[] = [
+  "egg", "milk", "soybean", "wheat", "crab", "shrimp",
+  "pork", "tomato", "sulfite", "chicken", "beef", "squid", "shellfish",
+];
+
+export function sortAllergens(allergens: Allergen[]): Allergen[] {
+  return [...allergens].sort((a, b) => ALLERGEN_ORDER.indexOf(a) - ALLERGEN_ORDER.indexOf(b));
+}
+
 export type Tag =
   | "withDrink" | "Salty" | "Heavy" | "Mild"
   | "Spicy" | "Normal" | "Dry" | "Sweety" | "withRamyeon" | "Chewy" | "Fishy";

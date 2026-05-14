@@ -10,7 +10,7 @@ import AllergenFilter from "../components/AllergenFilter";
 import ProductCard from "../components/ProductCard";
 import { Switch } from "@/components/ui/switch";
 import { fetchProducts } from "../lib/supabase";
-import type { Product, Allergen } from "../lib/data";
+import { sortAllergens, type Product, type Allergen } from "../lib/data";
 
 const LABEL: React.CSSProperties = {
   fontFamily: "var(--font-mono)",
@@ -48,7 +48,7 @@ function SearchResults() {
   const allAllergens = useMemo(() => {
     const set = new Set<Allergen>();
     products.forEach((p) => p.allergens.forEach((a) => set.add(a)));
-    return Array.from(set).sort();
+    return sortAllergens(Array.from(set));
   }, [products]);
 
   const results = products.filter((product) => {
