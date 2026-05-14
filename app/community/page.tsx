@@ -83,7 +83,6 @@ export default function CommunityPage() {
             <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700}}>커뮤니티</h1>
             <p style={{ margin: "6px 0 0", color: "var(--mute)" }}>삼각김밥 추천, 신상 정보, 조합 이야기를 나누는 공간</p>
           </div>
-          <Link href="/products/_/review" style={{ color: "var(--accent)", textDecoration: "none", whiteSpace: "nowrap" }}>리뷰 쓰기</Link>
         </div>
 
         <div
