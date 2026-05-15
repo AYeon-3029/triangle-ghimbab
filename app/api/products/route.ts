@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllProducts } from "@/backend/product.service";
+import { getTopTagsWithTies } from "@/backend/scoring";
 import type { Brand } from "@prisma/client";
 import type { Tag } from "@/app/lib/data";
 
@@ -21,9 +22,7 @@ export async function GET(req: NextRequest) {
       score: p.score,
       tier: p.tier,
       reviewCount: p._count.reviews,
-      tags: Object.entries(p.tagCounts as Record<string, number>)
-        .filter(([, n]) => n > 0)
-        .map(([t]) => t as Tag),
+      tags: getTopTagsWithTies(p.tagCounts as Record<string, number>, 2) as Tag[],
       imageUrl: p.imageUrl,
       isNew: p.isNew,
       allergens: p.allergens,

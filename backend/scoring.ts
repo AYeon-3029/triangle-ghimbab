@@ -53,3 +53,16 @@ export function getTopTags(
     .slice(0, limit)
     .map(([tag, count]) => ({ tag, count }));
 }
+
+export function getTopTagsWithTies(
+  tagCounts: Record<string, number>,
+  topN: number
+): string[] {
+  const entries = Object.entries(tagCounts).filter(([, n]) => n > 0);
+  if (entries.length === 0) return [];
+  entries.sort((a, b) => b[1] - a[1]);
+  if (entries.length <= topN) return entries.map(([tag]) => tag);
+
+  const threshold = entries[topN - 1][1];
+  return entries.filter(([, count]) => count >= threshold).map(([tag]) => tag);
+}
