@@ -1,25 +1,9 @@
 /// <reference types="node" />
-import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-import { PrismaClient, Brand, Tag, Tier } from "@prisma/client";
+import { PrismaClient, Brand, Tag, Allergen, Tier } from "@prisma/client";
 
-const envPath = join(process.cwd(), ".env.local");
-if (existsSync(envPath)) {
-  for (const line of readFileSync(envPath, "utf8").split(/\r?\n/)) {
-    const match = line.match(/^\s*([^#][^=]+)=(.*)$/);
-    if (!match) continue;
-    const key = match[1].trim();
-    const value = match[2].trim().replace(/^["']|["']$/g, "");
-    process.env[key] ??= value;
-  }
+function calcScore(avgRating: number, reviewCount: number, imageCount: number, purchaseCount: number): number {
+  return avgRating * (10 + reviewCount * 0.1 + imageCount * 0.3 + purchaseCount * 0.2);
 }
-
-const prisma = new PrismaClient();
-
-function calcScore(avgRating: number, reviewCount: number, imageCount: number): number {
-  return avgRating * (10 + reviewCount * 0.1 + imageCount * 0.3);
-}
-
 function calcTier(score: number, reviewCount: number): Tier {
   if (reviewCount < 1) return Tier.Unknown;
   if (score >= 50) return Tier.S;
@@ -27,14 +11,13 @@ function calcTier(score: number, reviewCount: number): Tier {
   if (score >= 30) return Tier.B;
   return Tier.C;
 }
-
 function calcTagCounts(tagLists: Tag[][]): Record<string, number> {
   const counts: Record<string, number> = {};
-  for (const tags of tagLists) {
-    for (const tag of tags) counts[tag] = (counts[tag] ?? 0) + 1;
-  }
+  for (const tags of tagLists) for (const tag of tags) counts[tag] = (counts[tag] ?? 0) + 1;
   return counts;
 }
+
+const prisma = new PrismaClient();
 
 // -------------------------------------------------------
 // 1. 제품 + 리뷰 데이터를 여기에 입력하세요
@@ -46,6 +29,7 @@ const SEED_DATA: {
   imageUrl: string;
   isNew?: boolean;
   price?: number;
+  allergens?: Allergen[];
   reviews: {
     id?: string;          // 지정 시 해당 값 사용, 생략 시 cuid() 자동 생성
     rating: number;       // 0.5 단위 (필수)
@@ -53,10 +37,13 @@ const SEED_DATA: {
     imageUrl?: string;    // 이미지 URL (선택)
     tags?: Tag[];         // 태그 목록 (선택)
     isPurchase?: boolean; // 재구매 의사 여부 (선택, 기본값 false)
+    authorName?: string;  // 작성자 이름 (선택)
   }[];
 }[] = [
   // ── 삼각 시리즈 ──────────────────────────────
-  { id: "P001", name: "삼각)저당전주비빔",       brand: Brand.GS25, price: 1200, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P001.jpg", reviews: [
+  { id: "P001", name: "삼각)저당전주비빔",       brand: Brand.GS25, price: 1200, isNew: true,
+    allergens: [Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shrimp, Allergen.shellfish, Allergen.chicken, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P001.jpg", reviews: [
     {
       id: "R0011",
       rating: 4,
@@ -64,10 +51,26 @@ const SEED_DATA: {
       imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0011_P001.jpg",
     }
   ] },
-  { id: "P002", name: "삼각)라이트참치마요",     brand: Brand.GS25, price: 1300, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P002.jpg", reviews: [] },
-  { id: "P003", name: "삼각)콘참치마요",         brand: Brand.GS25, price: 1300, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P003.jpg", reviews: [] },
-  { id: "P004", name: "삼각)갈비양념불고기",     brand: Brand.GS25, price: 1300, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P004.jpg", reviews: [] },
-  { id: "P005", name: "삼각)참치마요",           brand: Brand.GS25, price: 1200, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P005.jpg", reviews: [
+  { id: "P002", name: "삼각)라이트참치마요",     brand: Brand.GS25, price: 1300, isNew: true,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.crab, Allergen.shrimp, Allergen.chicken, Allergen.beef, Allergen.squid, Allergen.shellfish],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P002.jpg", reviews: [] },
+  { id: "P003", name: "삼각)콘참치마요",         brand: Brand.GS25, price: 1300,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P003.jpg", reviews: [] },
+  { id: "P004", name: "삼각)갈비양념불고기",     brand: Brand.GS25, price: 1300, 
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.pork, Allergen.sulfite, Allergen.chicken, Allergen.beef, Allergen.shellfish],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P004.jpg", reviews: [
+      {
+      id: "R0043",
+      rating: 2.5,
+      comment: `단맛이 강한 삼각김밥입니다. 사이사이에 밤이 들어가 있고, 단맛 때문에 호불호가 갈릴 듯합니다.`,
+      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0043_P004.jpg",
+      tags: [Tag.Sweety],
+    },
+    ] },
+  { id: "P005", name: "삼각)참치마요",           brand: Brand.GS25, price: 1200,
+    allergens: [Allergen.egg, Allergen.soybean, Allergen.wheat],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P005.jpg", reviews: [
     {
       id: "R0015",
       rating: 4,
@@ -101,38 +104,26 @@ const SEED_DATA: {
       rating: 4.5,
       comment: `든든합니다`,
       tags: [Tag.Heavy],
+    },
+    {
+      id: "R0037",
+      rating: 4.5,
+      comment: `라면이랑 먹어도 맛있고, 그냥 먹어도 맛있고, 차갑게 먹어 라면이랑도 맛있고, 데워서 먹어도 맛있는 최고의 제품`,
+      tags: [Tag.withRamyeon]
     }
   ] },
-  { id: "P006", name: "삼각)더바삭한김참치마요",brand: Brand.GS25, price: 1200, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P006.jpg", reviews: [] },
-  { id: "P007", name: "삼각)新전주비빔",         brand: Brand.GS25, price: 1200, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P007.jpg", reviews: [
+  { id: "P006", name: "삼각)더바삭한김참치마요", brand: Brand.GS25, price: 1200,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.chicken],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P006.jpg", reviews: [] },
+  { id: "P007", name: "삼각)新전주비빔",         brand: Brand.GS25, price: 1200,
+    allergens: [Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shrimp, Allergen.shellfish, Allergen.chicken, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P007.jpg", reviews: [
     {
       id: "R0001",
       rating: 4,
       comment: `먹기전에 약간 짜지않을까 걱정했는데 생각보다 양념이 과하지 않음. 밥 전체에 양념이 베어있어서 모서리 부분도 밍밍하지않았음. 제로 콜라랑 먹으면 더 맛있을 듯? 다만 양이 다소 부족하여 2개는 먹어야 한끼를 때울 수 있어 보임`,
       imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0001_P007.jpg",
       tags: [Tag.withDrink, Tag.Dry],
-    }
-  ] },
-  { id: "P008", name: "삼각)스팸김치볶음밥",         brand: Brand.GS25, price: 1400, isNew: true, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P008.jpg", reviews: [
-    {
-      id: "R0031",
-      rating: 4.5,
-      comment: `적절한 간과 적당한 맵기와 신뢰의 스팸 및 마요`,
-      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0031_P008.jpg",
-    }
-  ] },
-  { id: "P009", name: "삼각)참치김치볶음밥",         brand: Brand.GS25, price: 1400, isNew: true, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P009.jpg", reviews: [
-  ] },
-
-  // ── 더큰 시리즈 ──────────────────────────────
-  { id: "P101", name: "더큰)닭갈비깻잎쌈밥",    brand: Brand.GS25, price: 1800, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P101.jpg", reviews: [] },
-  { id: "P102", name: "더큰)전주비빔",           brand: Brand.GS25, price: 1700, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P102.jpg", reviews: [] },
-  { id: "P103", name: "더큰)스팸계란볶음밥", isNew: true,    brand: Brand.GS25, price: 1900,  imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P103.jpg", reviews: [
-    {
-      id: "R0007",
-      rating: 3.5,
-      comment: `단독으로도, 곁들임으로도 무난함`,
-      tags: [Tag.Normal],
     },
     {
       id: "R0012",
@@ -149,7 +140,53 @@ const SEED_DATA: {
     {
       id: "R0014",
       rating: 4,
-      comment: `z`,
+    },
+  ] },
+  { id: "P008", name: "삼각)스팸김치볶음밥",    brand: Brand.GS25, price: 1400, isNew: true,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shrimp, Allergen.shellfish, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P008.jpg", reviews: [
+    {
+      id: "R0031",
+      rating: 4.5,
+      comment: `적절한 간과 적당한 맵기와 신뢰의 스팸 및 마요`,
+      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0031_P008.jpg",
+    }
+  ] },
+  { id: "P009", name: "삼각)참치김치볶음밥",    brand: Brand.GS25, price: 1400, isNew: true,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.crab, Allergen.shrimp, Allergen.squid, Allergen.shellfish, Allergen.chicken, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P009.jpg", reviews: [] },
+
+  // ── 더큰 시리즈 ──────────────────────────────
+  { id: "P101", name: "더큰)닭갈비깻잎쌈밥",    brand: Brand.GS25, price: 1800, isNew: true,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shellfish, Allergen.chicken, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P101.jpg", reviews: [
+      {
+      id: "R0042",
+      rating: 3.5,
+      comment: `좀 달아요... 많이... 그리고 막 엄청엄청 매운 건 아닌데, 기분 좋게 매운 느낌은 아닌..? 꺳잎이 느껴지진 않았어요..`,
+      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0042_P101.jpg",
+      tags: [Tag.Sweety, Tag.Spicy],
+    },
+    ] },
+  { id: "P102", name: "더큰)전주비빔",           brand: Brand.GS25, price: 1700, isNew: true,
+    allergens: [Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shrimp, Allergen.shellfish, Allergen.chicken, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P102.jpg", reviews: [
+    {
+      id: "R0033",
+      rating: 4.5,
+      comment: `믿고 먹는 맛. 속재료 풍부하고 맛있음.`,
+      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0033_P102.jpg",
+      tags: [Tag.Heavy]
+    }
+  ] },
+  { id: "P103", name: "더큰)스팸계란볶음밥",    brand: Brand.GS25, price: 1900, isNew: true,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shrimp, Allergen.shellfish, Allergen.chicken, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P103.jpg", reviews: [
+    {
+      id: "R0007",
+      rating: 3.5,
+      comment: `단독으로도, 곁들임으로도 무난함`,
+      tags: [Tag.Normal],
     },
     {
       id: "R0025",
@@ -157,10 +194,31 @@ const SEED_DATA: {
       comment: `무난무난??? 막 맛있는 느낌은 아니고...`,
       imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0025_P103.jpg",
       tags: [Tag.Normal]
+    },
+    {
+      id: "R0034",
+      rating: 3,
+      comment: `스팸이 많이 들어있지 않고, 계란볶음밥 맛이 싱거웠다. 그러나, 마요네즈와 스팸의 조합이 좋아 계란볶음밥과 맛있게 먹었던 것 같다. 김의 바삭함과 짭잘함도 좋았다. 내용물 (스팸+마요) 양이 많이 들어있으면 좋겠다.`,
+      tags: [Tag.Mild, Tag.Chewy]
+    },
+    {
+      id: "R0035",
+      rating: 3.5,
+      comment: `무난하게 맛있는 맛`,
+      tags: [Tag.Normal],
+    },
+    {
+      id: "R0038",
+      rating: 5,
+      comment: `너무 맛있어요`,
     }
   ] },
-  { id: "P104", name: "더큰)바삭김참치마요",     brand: Brand.GS25, price: 1700, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P104.jpg", reviews: [] },
-  { id: "P105", name: "더큰)매콤제육깻잎쌈밥",  brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P105.jpg", reviews: [
+  { id: "P104", name: "더큰)바삭김참치마요",     brand: Brand.GS25, price: 1700,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.crab, Allergen.shrimp, Allergen.squid, Allergen.shellfish, Allergen.chicken, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P104.jpg", reviews: [] },
+  { id: "P105", name: "더큰)매콤제육깻잎쌈밥",  brand: Brand.GS25, price: 1800,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shellfish, Allergen.chicken, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P105.jpg", reviews: [
     {
       id: "R0024",
       rating: 5,
@@ -181,7 +239,9 @@ const SEED_DATA: {
       tags: [Tag.Heavy, Tag.Chewy],
     }
   ] },
-  { id: "P106", name: "더큰)스팸김치볶음밥",     brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P106.jpg", reviews: [
+  { id: "P106", name: "더큰)스팸김치볶음밥",     brand: Brand.GS25, price: 1800,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shrimp, Allergen.shellfish, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P106.jpg", reviews: [
     {
       id: "R0002",
       rating: 3.5,
@@ -203,8 +263,12 @@ const SEED_DATA: {
       tags: [Tag.Salty, Tag.Heavy],
     }
   ] },
-  { id: "P107", name: "더큰)전주비빔참치마요",   brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P107.jpg", reviews: [] },
-  { id: "P108", name: "더큰)베이컨참치마요",     brand: Brand.GS25, price: 1700, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P108.jpg", reviews: [
+  { id: "P107", name: "더큰)전주비빔참치마요",   brand: Brand.GS25, price: 1800,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.crab, Allergen.shrimp, Allergen.squid, Allergen.shellfish, Allergen.chicken, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P107.jpg", reviews: [] },
+  { id: "P108", name: "더큰)베이컨참치마요",     brand: Brand.GS25, price: 1700,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.chicken, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P108.jpg", reviews: [
     {
       id: "R0003",
       rating: 2.0,
@@ -228,7 +292,9 @@ const SEED_DATA: {
       tags: [Tag.Mild],
     }
   ] },
-  { id: "P109", name: "더큰)스팸콘치즈김볶밥",  brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P109.jpg", reviews: [
+  { id: "P109", name: "더큰)스팸콘치즈김볶밥",  brand: Brand.GS25, price: 1800,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shrimp, Allergen.shellfish, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P109.jpg", reviews: [
     {
       id: "R0005",
       rating: 3.5,
@@ -237,7 +303,9 @@ const SEED_DATA: {
       tags: [Tag.Heavy, Tag.Salty, Tag.Spicy],
     }
   ] },
-  { id: "P110", name: "더큰)리챔참치마요",       brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P110.jpg", reviews: [
+  { id: "P110", name: "더큰)리챔참치마요",       brand: Brand.GS25, price: 1800,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.crab, Allergen.shrimp, Allergen.squid, Allergen.shellfish, Allergen.chicken, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P110.jpg", reviews: [
     {
       id: "R0026",
       rating: 0.5,
@@ -246,7 +314,9 @@ const SEED_DATA: {
       tags: [Tag.Fishy]
     }
   ] },
-  { id: "P111", name: "더큰)참치마요",           brand: Brand.GS25, price: 1700, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P111.jpg", reviews: [
+  { id: "P111", name: "더큰)참치마요",           brand: Brand.GS25, price: 1700,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.crab, Allergen.shrimp, Allergen.squid, Allergen.shellfish, Allergen.chicken, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P111.jpg", reviews: [
     {
       id: "R0028",
       rating: 4,
@@ -261,7 +331,9 @@ const SEED_DATA: {
       tags: [Tag.Normal, Tag.Mild, Tag.withRamyeon],
     }
   ] },
-  { id: "P112", name: "더큰)불닭콘치즈",         brand: Brand.GS25, price: 1800,  imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P112.jpg", reviews: [
+  { id: "P112", name: "더큰)불닭콘치즈",         brand: Brand.GS25, price: 1800,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shellfish, Allergen.tomato, Allergen.chicken, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P112.jpg", reviews: [
     {
       id: "R0006",
       rating: 5,
@@ -271,8 +343,20 @@ const SEED_DATA: {
   ] },
 
   // ── 흑백 시리즈 ──────────────────────────────
-  { id: "P201", name: "흑백)파파베이컨리조또",   brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P201.jpg", reviews: [] },
-  { id: "P202", name: "흑백)최유강랍스터볶음밥",brand: Brand.GS25, price: 1800, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P202.jpg", reviews: [
+  { id: "P201", name: "흑백)파파베이컨리조또",   brand: Brand.GS25, price: 1800,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shellfish, Allergen.chicken, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P201.jpg", reviews: [
+      {
+      id: "R0041",
+      rating: 3.0,
+      comment: `대파가 씹히는 게 신기... 맛도 오묘... 내용물은 실함...`,
+      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0041_P201.jpg",
+      tags: [Tag.Normal, Tag.Chewy],
+    },
+    ] },
+  { id: "P202", name: "흑백)최유강랍스터볶음밥", brand: Brand.GS25, price: 1800,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.crab, Allergen.shrimp, Allergen.tomato, Allergen.sulfite, Allergen.chicken, Allergen.squid, Allergen.shellfish],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P202.jpg", reviews: [
     {
       id: "R0021",
       rating: 4.5,
@@ -280,10 +364,27 @@ const SEED_DATA: {
       tags: [Tag.Heavy],
     }
   ] },
-  { id: "P203", name: "흑백)최강록날치알명란",   brand: Brand.GS25, price: 1700, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P203.jpg", reviews: [] },
+  { id: "P203", name: "흑백)최강록날치알명란",   brand: Brand.GS25, price: 1700,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shrimp, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P203.jpg", reviews: [
+    {
+      id: "R0036",
+      rating: 5.0,
+      comment: `너무 맛있고 와사비향 은은해서 좋았음`,
+      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0036_P203.jpg",
+    },
+    {
+      id: "R0044",
+      rating: 3.0,
+      comment: `와사비 맛이 꽤 나는 삼각김밥입니다. 명란 맛이 강하진 않은 것 같습니다.`,
+      imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0044_P203.jpg",
+    }
+  ] },
 
   // ── 종가 시리즈 ──────────────────────────────
-  { id: "P301", name: "종가)묵은지김치제육",     brand: Brand.GS25, price: 1700, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P301.jpg", reviews: [
+  { id: "P301", name: "종가)묵은지김치제육",     brand: Brand.GS25, price: 1700,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shrimp, Allergen.shellfish, Allergen.chicken, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P301.jpg", reviews: [
     {
       id: "R0023",
       rating: 4,
@@ -292,7 +393,9 @@ const SEED_DATA: {
       tags: [Tag.Sweety],
     }
   ] },
-  { id: "P302", name: "종가)들기름묵은지참치",   brand: Brand.GS25, price: 1700, imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P302.jpg", reviews: [
+  { id: "P302", name: "종가)들기름묵은지참치",   brand: Brand.GS25, price: 1700,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.crab, Allergen.shrimp, Allergen.squid, Allergen.shellfish, Allergen.chicken, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P302.jpg", reviews: [
     {
       id: "R0008",
       rating: 3.0,
@@ -301,8 +404,25 @@ const SEED_DATA: {
   ] },
 
   // ── 커플 시리즈 ──────────────────────────────
-  { id: "P401", name: "커플)매콤제육&콘참치",    brand: Brand.GS25, price: 2300, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P401.jpg", reviews: [] },
-  { id: "P402", name: "커플)바삭김참치&불고기", brand: Brand.GS25, price: 2300, isNew: true,imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P402.jpg", reviews: [] },
+  { id: "P401", name: "커플)매콤제육&콘참치",    brand: Brand.GS25, price: 2300, isNew: true,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shellfish, Allergen.chicken, Allergen.pork, Allergen.beef],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P401.jpg", reviews: [] },
+  { id: "P402", name: "커플)바삭김참치&불고기",  brand: Brand.GS25, price: 2300, isNew: true,
+    allergens: [Allergen.egg, Allergen.milk, Allergen.soybean, Allergen.wheat, Allergen.shellfish, Allergen.chicken, Allergen.pork, Allergen.beef, Allergen.sulfite],
+    imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/product-images/P402.jpg", reviews: [
+      {
+        id: "R0039",
+        rating: 4,
+        comment: `슴슴할 줄 알았는데 간이 생각보다 잘 맞춰져 있고 단짠단짠 느낌이라 좋아요! 단점은 어느게 참치마요고 어느게 갈비양념불고기인지 모른다는점..? 근데 갈비양념불고기에 고기말고 밤..? 감자? 같은 거 들어있어서 호불호가 갈릴 수도 있을 것 같습니다!`,
+        imageUrl: "https://chaoqaomqhdvlqnxrdhx.supabase.co/storage/v1/object/public/review-images/R0039_P402.jpg",
+      },
+      {
+        id: "R0040",
+        rating: 4.5,
+        comment: `참치마요는 무난한 맛이었고 갈비양념불고기는 조금 달았지만 맛있었어요`,
+        tags: [Tag.Normal, Tag.Sweety]
+      }
+    ] },
 ];
 
 // -------------------------------------------------------
@@ -313,8 +433,7 @@ async function main() {
   await prisma.review.deleteMany();
   await prisma.product.deleteMany();
 
-  console.log("Seeding...");
-
+  console.log("Seeding products...");
   for (const product of SEED_DATA) {
     const { reviews, ...productData } = product;
 
@@ -324,13 +443,15 @@ async function main() {
         ? 0
         : reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount;
     const imageCount = reviews.filter((r) => r.imageUrl != null).length;
-    const score = calcScore(avgRating, reviewCount, imageCount);
+    const purchaseCount = reviews.filter((r) => r.isPurchase).length;
+    const score = calcScore(avgRating, reviewCount, imageCount, purchaseCount);
     const tier = calcTier(score, reviewCount);
     const tagCounts = calcTagCounts(reviews.map((r) => r.tags ?? []));
 
     const created = await prisma.product.create({
       data: {
         ...productData,
+        allergens: productData.allergens ?? [],
         avgRating,
         score,
         tier,
@@ -343,6 +464,7 @@ async function main() {
             imageUrl: r.imageUrl,
             tags: r.tags ?? [],
             isPurchase: r.isPurchase ?? false,
+            authorName: r.authorName,
           })),
         },
       },
