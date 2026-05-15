@@ -53,7 +53,7 @@ export async function deleteProduct(id: string) {
 export async function recalcProduct(productId: string) {
   const reviews = await prisma.review.findMany({
     where: { productId },
-    select: { rating: true, imageUrl: true, tags: true },
+    select: { rating: true, imageUrl: true, tags: true, isPurchase: true },
   });
 
   const reviewCount = reviews.length;
@@ -62,7 +62,8 @@ export async function recalcProduct(productId: string) {
       ? 0
       : reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount;
   const imageCount = reviews.filter((r) => r.imageUrl !== null).length;
-  const score = calcScore(avgRating, reviewCount, imageCount);
+  const purchaseCount = reviews.filter((r) => r.isPurchase).length;
+  const score = calcScore(avgRating, reviewCount, imageCount, purchaseCount);
   const tier = calcTier(score, reviewCount);
   const tagCounts = calcTagCounts(reviews.map((r) => r.tags));
 

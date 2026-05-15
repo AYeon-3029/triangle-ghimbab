@@ -12,10 +12,10 @@ export const TIER_CONFIG = {
 export function calcScore(
   avgRating: number,
   reviewCount: number,
-  imageCount: number
+  imageCount: number,
+  purchaseCount: number
 ): number {
-  // score = avgRating * (10 + reviewCount * 0.1 + imageCount * 0.3)
-  return avgRating * (10 + reviewCount * 0.1 + imageCount * 0.3);
+  return avgRating * (10 + reviewCount * 0.1 + imageCount * 0.3 + purchaseCount * 0.2);
 }
 
 export function calcTier(score: number, reviewCount: number): Tier {
